@@ -16,18 +16,6 @@ A cozy penguin world-building game you can play right in your browser — no ins
 
 ---
 
-## Deploy to GitHub Pages (free hosting)
-
-1. **Create a new GitHub repository** (e.g. `penguin-isle`)
-2. **Upload `index.html`** to the root of the repo
-3. Go to **Settings → Pages**
-4. Under *Source*, select **Deploy from a branch** → branch: `main`, folder: `/ (root)`
-5. Click **Save** — your game will be live at `https://YOUR-USERNAME.github.io/penguin-isle/` in ~60 seconds
-
-That's it! One file, zero dependencies, zero build steps.
-
----
-
 ## How to Play
 
 | Action | How |
