@@ -2,7 +2,7 @@
 
 A cozy penguin world-building game you can play right in your browser — no installs, no accounts needed.
 
-**[▶ Play it live](https://YOUR-USERNAME.github.io/penguin-isle/)**
+**[▶ Play it live](https://kajalk28.github.io/penguin-isle/)**
 
 ---
 
