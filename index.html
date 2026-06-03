@@ -5,308 +5,209 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Penguin Isle — Build Your World</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
+:root {
+  --ice:#e8f4fd;--ice2:#cce8f8;--snow:#f0f8ff;--ocean:#2196b8;--ocean2:#1565a8;
+  --teal:#00b8a9;--teal2:#008f83;--gold:#ffd166;--gold2:#f4a621;
+  --coral:#ff7f7f;--coral2:#e05050;--night:#0d1b2a;--night2:#162940;
+  --text:#1a2e40;--text2:#4a6080;--white:#ffffff;
+  --border:rgba(255,255,255,0.12);--r:18px;--r2:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#0a1f35 0%,#0f3460 50%,#1565a8 100%);min-height:100vh;color:white;overflow-x:hidden;}
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.star{position:absolute;background:white;border-radius:50%;animation:twinkle 3s infinite;opacity:0;}
+@keyframes twinkle{0%,100%{opacity:0}50%{opacity:.8}}
+#app{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;}
 
-  :root {
-    --ice: #e8f4fd;
-    --ice2: #cce8f8;
-    --snow: #f0f8ff;
-    --ocean: #2196b8;
-    --ocean2: #1565a8;
-    --teal: #00b8a9;
-    --teal2: #008f83;
-    --gold: #ffd166;
-    --gold2: #f4a621;
-    --coral: #ff7f7f;
-    --coral2: #e05050;
-    --mint: #c8f5e0;
-    --purple: #a78bfa;
-    --night: #0d1b2a;
-    --night2: #162940;
-    --text: #1a2e40;
-    --text2: #4a6080;
-    --white: #ffffff;
-    --card: #ffffffdd;
-    --border: #b8d9f0;
-    --shadow: 0 4px 24px rgba(33,110,180,0.13);
-    --r: 18px;
-    --r2: 12px;
-  }
+/* TOP BAR */
+#topbar{background:rgba(8,20,35,0.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:10px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;flex-wrap:wrap;}
+.logo{font-family:'Fredoka One';font-size:22px;color:var(--gold);letter-spacing:1px;display:flex;align-items:center;gap:8px;}
+.logo img{width:32px;height:32px;border-radius:50%;object-fit:cover;}
+.stat-pill{background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.14);border-radius:20px;padding:4px 13px;font-size:13px;font-weight:700;color:white;display:flex;align-items:center;gap:6px;}
+.stat-pill img{width:18px;height:18px;object-fit:contain;}
+#topbar .spacer{flex:1;}
+#nav-tabs{display:flex;gap:4px;}
+.tab-btn{background:transparent;border:none;cursor:pointer;color:rgba(255,255,255,0.5);font-family:'Nunito';font-weight:700;font-size:13px;padding:7px 13px;border-radius:10px;transition:all .2s;}
+.tab-btn:hover{background:rgba(255,255,255,0.1);color:white;}
+.tab-btn.active{background:var(--teal);color:white;}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* VIEWS */
+.view{display:none;flex:1;padding:18px;}
+.view.active{display:block;}
 
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: linear-gradient(160deg, #0d2b4a 0%, #1a4870 40%, #1565a8 100%);
-    min-height: 100vh;
-    color: var(--text);
-    overflow-x: hidden;
-  }
+/* WORLD */
+#world-container{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:var(--r);padding:14px;overflow:auto;}
+#world-grid{display:grid;gap:3px;}
+.cell{width:60px;height:60px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,transform .1s;position:relative;overflow:hidden;}
+.cell:hover{background:rgba(255,255,255,0.14);transform:scale(1.06);}
+.cell.locked{background:rgba(0,0,0,0.35);cursor:not-allowed;filter:brightness(.35);}
+.cell.locked:hover{transform:none;background:rgba(0,0,0,0.35);}
+.cell img{width:46px;height:46px;object-fit:contain;image-rendering:auto;pointer-events:none;}
+.cell .cell-label{position:absolute;bottom:1px;left:0;right:0;text-align:center;font-size:8px;font-weight:700;color:rgba(255,255,255,.7);text-shadow:0 1px 3px rgba(0,0,0,.8);line-height:1;}
 
-  /* ── STARS BACKGROUND ── */
-  #stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-  .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 3s infinite; opacity: 0; }
-  @keyframes twinkle { 0%,100%{opacity:0} 50%{opacity:.8} }
+/* TOOLBAR */
+#toolbar{background:rgba(8,20,35,0.82);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.tool-sep{width:1px;height:36px;background:rgba(255,255,255,0.14);}
+.tool-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;}
+.tool-btn{background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:5px 8px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;flex-direction:column;}
+.tool-btn img{width:32px;height:32px;object-fit:contain;}
+.tool-btn span{font-size:9px;font-weight:700;color:rgba(255,255,255,.65);}
+.tool-btn:hover{background:rgba(255,255,255,0.16);transform:translateY(-2px);}
+.tool-btn.active{background:rgba(0,184,169,0.3);border-color:var(--teal);}
+.tool-btn.erase-btn{border-color:rgba(255,100,100,0.3);}
+.tool-btn.erase-btn.active{background:rgba(220,80,80,0.3);border-color:var(--coral);}
+.expand-btn{background:linear-gradient(135deg,var(--ocean),var(--ocean2));border:none;border-radius:12px;padding:9px 18px;font-family:'Nunito';font-weight:800;font-size:12px;color:white;cursor:pointer;transition:all .2s;}
+.expand-btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(21,101,168,.4);}
+.expand-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 
-  /* ── LAYOUT ── */
-  #app { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
+/* HELP TOOLTIP */
+.help-badge{background:rgba(255,209,102,0.15);border:1px solid var(--gold);color:var(--gold);border-radius:8px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;}
+.help-badge:hover{background:rgba(255,209,102,0.28);}
 
-  /* ── TOP BAR ── */
-  #topbar {
-    background: rgba(13,27,42,0.75);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    padding: 10px 20px;
-    display: flex; align-items: center; gap: 16px;
-    position: sticky; top: 0; z-index: 100;
-  }
-  #topbar .logo { font-family: 'Fredoka One'; font-size: 22px; color: var(--gold); letter-spacing: 1px; }
-  .stat-pill {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 20px; padding: 4px 14px;
-    font-size: 13px; font-weight: 700; color: white;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .stat-pill span { font-size: 16px; }
-  #topbar .spacer { flex: 1; }
-  #nav-tabs { display: flex; gap: 4px; }
-  .tab-btn {
-    background: transparent; border: none; cursor: pointer;
-    color: rgba(255,255,255,0.55); font-family: 'Nunito'; font-weight: 700; font-size: 13px;
-    padding: 7px 14px; border-radius: 10px; transition: all .2s;
-  }
-  .tab-btn:hover { background: rgba(255,255,255,0.1); color: white; }
-  .tab-btn.active { background: var(--teal); color: white; }
+/* INSTRUCTIONS PANEL */
+.instructions-box{background:rgba(0,184,169,0.1);border:1px solid var(--teal);border-radius:var(--r2);padding:14px 18px;margin-bottom:14px;font-size:13px;line-height:1.65;color:rgba(255,255,255,.85);}
+.instructions-box h3{font-family:'Fredoka One';color:var(--teal);font-size:15px;margin-bottom:8px;}
+.instructions-box ul{padding-left:18px;}
+.instructions-box li{margin-bottom:4px;}
+.instructions-toggle{background:none;border:none;color:var(--teal);font-weight:700;font-size:12px;cursor:pointer;padding:0;margin-left:8px;}
 
-  /* ── VIEWS ── */
-  .view { display: none; flex: 1; padding: 20px; }
-  .view.active { display: block; }
+/* STORY */
+.story-chapter{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:var(--r);padding:20px 24px;margin-bottom:14px;}
+.story-chapter.locked{opacity:.45;filter:grayscale(.5);}
+.chapter-header{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
+.chapter-icon-img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.2);}
+.chapter-title{font-family:'Fredoka One';font-size:19px;color:var(--gold);}
+.chapter-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:2px;}
+.chapter-body{font-size:13px;color:rgba(255,255,255,.78);line-height:1.65;margin-bottom:12px;}
+.chapter-tasks{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
+.task-row{display:flex;align-items:center;gap:9px;background:rgba(0,0,0,.2);border-radius:10px;padding:7px 12px;font-size:12px;color:rgba(255,255,255,.8);}
+.task-row.done{color:var(--teal);}
+.task-progress{flex:1;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;}
+.task-progress-fill{height:100%;background:var(--teal);border-radius:3px;transition:width .4s;}
+.claim-btn{background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:11px;padding:9px 20px;font-family:'Nunito';font-weight:800;font-size:13px;color:var(--night);cursor:pointer;transition:all .2s;}
+.claim-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,209,102,.35);}
+.claim-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.claimed-badge{background:var(--teal);color:white;border-radius:11px;padding:9px 20px;font-weight:800;font-size:13px;display:inline-block;}
 
-  /* ── WORLD GRID ── */
-  #world-container {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: var(--r); padding: 16px;
-    overflow: auto;
-  }
-  #world-grid {
-    display: grid;
-    grid-template-columns: repeat(20, 52px);
-    grid-template-rows: repeat(16, 52px);
-    gap: 2px;
-  }
-  .cell {
-    width: 52px; height: 52px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 26px;
-    transition: background .15s, transform .1s;
-    position: relative;
-  }
-  .cell:hover { background: rgba(255,255,255,0.15); transform: scale(1.05); }
-  .cell.locked {
-    background: rgba(0,0,0,0.3);
-    cursor: not-allowed;
-    filter: brightness(0.4);
-  }
-  .cell.locked:hover { transform: none; background: rgba(0,0,0,0.3); }
-  .cell.selected-tool { outline: 3px solid var(--gold); outline-offset: -2px; }
+/* MINIGAMES */
+.minigame-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:13px;}
+.minigame-card{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:var(--r);padding:20px;cursor:pointer;transition:all .2s;text-align:center;}
+.minigame-card:hover{background:rgba(255,255,255,0.11);transform:translateY(-4px);}
+.minigame-card .mg-img{width:72px;height:72px;object-fit:contain;margin:0 auto 10px;display:block;border-radius:12px;}
+.minigame-card .mg-name{font-family:'Fredoka One';font-size:17px;color:var(--gold);margin-bottom:5px;}
+.minigame-card .mg-desc{font-size:12px;color:rgba(255,255,255,.6);line-height:1.5;}
+.mg-reward{display:inline-block;background:rgba(255,209,102,.14);border:1px solid var(--gold);border-radius:8px;padding:3px 9px;font-size:11px;font-weight:700;color:var(--gold);margin-top:8px;}
+.mg-howto{font-size:11px;color:rgba(255,255,255,.45);margin-top:5px;}
 
-  /* ── TOOLBAR ── */
-  #toolbar {
-    background: rgba(13,27,42,0.8);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: var(--r); padding: 12px 16px;
-    margin-bottom: 14px;
-    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  }
-  .tool-section { display: flex; gap: 6px; align-items: center; }
-  .tool-sep { width: 1px; height: 36px; background: rgba(255,255,255,0.15); }
-  .tool-label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: .5px; }
-  .tool-btn {
-    background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.12);
-    border-radius: 10px; padding: 6px 10px; cursor: pointer;
-    font-size: 22px; transition: all .15s; display: flex; align-items: center; gap: 5px;
-  }
-  .tool-btn span { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.7); }
-  .tool-btn:hover { background: rgba(255,255,255,0.18); transform: translateY(-2px); }
-  .tool-btn.active { background: var(--teal); border-color: var(--teal2); }
-  .tool-btn.erase-btn { border-color: rgba(255,100,100,0.3); }
-  .tool-btn.erase-btn.active { background: var(--coral2); border-color: var(--coral); }
+/* SHOP */
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;}
+.shop-item{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:var(--r2);padding:14px 8px;text-align:center;cursor:pointer;transition:all .2s;}
+.shop-item:hover{background:rgba(255,255,255,0.12);transform:translateY(-2px);}
+.shop-item.owned{border-color:var(--teal);background:rgba(0,184,169,.1);}
+.shop-item img{width:48px;height:48px;object-fit:contain;margin:0 auto 6px;display:block;}
+.shop-item .si-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:3px;}
+.shop-item .si-price{font-size:11px;color:var(--gold);font-weight:700;}
+.shop-item.owned .si-price{color:var(--teal);}
+.section-title{font-family:'Fredoka One';font-size:17px;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.section-title img{width:26px;height:26px;object-fit:contain;}
 
-  /* ── STORY PANEL ── */
-  #story-view { max-width: 820px; margin: 0 auto; }
-  .story-chapter {
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: var(--r); padding: 22px 26px; margin-bottom: 16px;
-  }
-  .story-chapter.locked { opacity: .5; filter: grayscale(.6); }
-  .chapter-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
-  .chapter-icon { font-size: 36px; }
-  .chapter-title { font-family: 'Fredoka One'; font-size: 20px; color: var(--gold); }
-  .chapter-sub { font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 2px; }
-  .chapter-body { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.65; margin-bottom: 14px; }
-  .chapter-tasks { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-  .task-row {
-    display: flex; align-items: center; gap: 10px;
-    background: rgba(0,0,0,0.2); border-radius: 10px; padding: 8px 14px;
-    font-size: 13px; color: rgba(255,255,255,0.8);
-  }
-  .task-row.done { color: var(--teal); }
-  .task-row .check { font-size: 18px; }
-  .task-progress { flex: 1; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
-  .task-progress-fill { height: 100%; background: var(--teal); border-radius: 3px; transition: width .4s; }
-  .claim-btn {
-    background: linear-gradient(135deg, var(--gold), var(--gold2));
-    border: none; border-radius: 12px; padding: 10px 22px;
-    font-family: 'Nunito'; font-weight: 800; font-size: 14px; color: var(--night);
-    cursor: pointer; transition: all .2s;
-  }
-  .claim-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,209,102,0.35); }
-  .claim-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-  .claimed-badge {
-    background: var(--teal); color: white; border-radius: 12px;
-    padding: 10px 22px; font-weight: 800; font-size: 14px;
-  }
+/* MODAL */
+#modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+#modal-overlay.open{display:flex;}
+#modal-box{background:#0b2340;border:1px solid rgba(255,255,255,.15);border-radius:var(--r);padding:26px 30px;max-width:540px;width:93%;position:relative;max-height:90vh;overflow-y:auto;}
+#modal-close{position:absolute;top:13px;right:14px;background:rgba(255,255,255,.1);border:none;border-radius:8px;color:white;font-size:17px;cursor:pointer;padding:2px 8px;}
+#modal-title{font-family:'Fredoka One';font-size:21px;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+#modal-title img{width:36px;height:36px;object-fit:contain;border-radius:8px;}
+#modal-body{color:rgba(255,255,255,.85);font-size:13px;line-height:1.6;}
+canvas{border-radius:12px;display:block;margin:0 auto;}
+.mg-controls{display:flex;gap:9px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
+.mg-btn{background:var(--teal);border:none;border-radius:10px;padding:8px 18px;font-family:'Nunito';font-weight:800;font-size:13px;color:white;cursor:pointer;transition:all .2s;}
+.mg-btn:hover{background:var(--teal2);transform:translateY(-2px);}
+.mg-btn.secondary{background:rgba(255,255,255,.1);}
+.mg-score{text-align:center;font-size:24px;font-family:'Fredoka One';color:var(--gold);margin:8px 0;}
+.mg-msg{text-align:center;font-size:13px;color:rgba(255,255,255,.75);margin-bottom:5px;min-height:18px;}
 
-  /* ── MINIGAME VIEW ── */
-  #minigame-view { max-width: 820px; margin: 0 auto; }
-  .minigame-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
-  .minigame-card {
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: var(--r); padding: 22px;
-    cursor: pointer; transition: all .2s; text-align: center;
-  }
-  .minigame-card:hover { background: rgba(255,255,255,0.12); transform: translateY(-4px); box-shadow: var(--shadow); }
-  .minigame-card .mg-icon { font-size: 48px; margin-bottom: 10px; }
-  .minigame-card .mg-name { font-family: 'Fredoka One'; font-size: 18px; color: var(--gold); margin-bottom: 6px; }
-  .minigame-card .mg-desc { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.5; }
-  .mg-reward { display: inline-block; background: rgba(255,209,102,0.15); border: 1px solid var(--gold); border-radius: 8px; padding: 4px 10px; font-size: 12px; font-weight: 700; color: var(--gold); margin-top: 10px; }
+/* TOASTS */
+#toast-container{position:fixed;bottom:22px;right:22px;z-index:300;display:flex;flex-direction:column;gap:7px;}
+.toast{background:#0d2b45;border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:11px 16px;color:white;font-size:13px;font-weight:700;animation:slideIn .3s ease,fadeOut .4s 2.6s forwards;max-width:270px;display:flex;align-items:center;gap:8px;}
+.toast img{width:22px;height:22px;object-fit:contain;border-radius:4px;}
+@keyframes slideIn{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes fadeOut{to{opacity:0;transform:translateX(60px)}}
 
-  /* ── MODAL ── */
-  #modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.65);
-    z-index: 200; display: none; align-items: center; justify-content: center;
-    backdrop-filter: blur(4px);
-  }
-  #modal-overlay.open { display: flex; }
-  #modal-box {
-    background: #0e2640; border: 1px solid rgba(255,255,255,0.15);
-    border-radius: var(--r); padding: 28px 32px; max-width: 520px; width: 92%;
-    position: relative; max-height: 90vh; overflow-y: auto;
-  }
-  #modal-close {
-    position: absolute; top: 14px; right: 16px;
-    background: rgba(255,255,255,0.1); border: none; border-radius: 8px;
-    color: white; font-size: 18px; cursor: pointer; padding: 2px 8px;
-  }
-  #modal-title { font-family: 'Fredoka One'; font-size: 22px; color: var(--gold); margin-bottom: 8px; }
-  #modal-body { color: rgba(255,255,255,0.85); font-size: 14px; line-height: 1.6; }
+/* PENGUIN ID QUIZ */
+.quiz-img{width:220px;height:280px;object-fit:contain;border-radius:16px;display:block;margin:0 auto 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.quiz-opt{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 8px;font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;color:white;}
+.quiz-opt:hover{background:rgba(255,255,255,.16);}
+.quiz-opt.correct{background:rgba(0,184,169,.3);border-color:var(--teal);}
+.quiz-opt.wrong{background:rgba(220,80,80,.3);border-color:var(--coral);}
+.quiz-fact{background:rgba(255,255,255,.07);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;padding:10px 14px;font-size:12px;color:rgba(255,255,255,.8);margin-top:10px;line-height:1.55;}
 
-  /* ── MINIGAME CANVASES ── */
-  canvas { border-radius: 12px; display: block; margin: 0 auto; }
-  .mg-controls { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
-  .mg-btn {
-    background: var(--teal); border: none; border-radius: 10px; padding: 9px 20px;
-    font-family: 'Nunito'; font-weight: 800; font-size: 14px; color: white;
-    cursor: pointer; transition: all .2s;
-  }
-  .mg-btn:hover { background: var(--teal2); transform: translateY(-2px); }
-  .mg-btn.secondary { background: rgba(255,255,255,0.1); }
-  .mg-score { text-align: center; font-size: 26px; font-family: 'Fredoka One'; color: var(--gold); margin: 10px 0; }
-  .mg-msg { text-align: center; font-size: 14px; color: rgba(255,255,255,.75); margin-bottom: 6px; min-height: 20px; }
+/* ONBOARDING */
+.onboard-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+.onboard-box{background:#0b2340;border:1px solid rgba(255,255,255,.18);border-radius:22px;padding:32px 36px;max-width:480px;width:92%;text-align:center;}
+.onboard-box h2{font-family:'Fredoka One';font-size:26px;color:var(--gold);margin-bottom:8px;}
+.onboard-box p{font-size:14px;color:rgba(255,255,255,.78);line-height:1.65;margin-bottom:20px;}
+.onboard-steps{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
+.onboard-step{background:rgba(255,255,255,.07);border-radius:12px;padding:12px;font-size:12px;color:rgba(255,255,255,.75);}
+.onboard-step img{width:36px;height:36px;object-fit:contain;margin-bottom:6px;display:block;margin:0 auto 6px;}
+.onboard-step b{display:block;font-size:13px;color:white;margin-top:4px;}
+.onboard-btn{background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:14px;padding:13px 30px;font-family:'Nunito';font-weight:800;font-size:15px;color:var(--night);cursor:pointer;transition:all .2s;}
+.onboard-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,209,102,.4);}
 
-  /* ── SHOP VIEW ── */
-  #shop-view { max-width: 820px; margin: 0 auto; }
-  .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
-  .shop-item {
-    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
-    border-radius: var(--r2); padding: 16px 10px; text-align: center;
-    cursor: pointer; transition: all .2s;
-  }
-  .shop-item:hover { background: rgba(255,255,255,0.13); transform: translateY(-2px); }
-  .shop-item.owned { border-color: var(--teal); background: rgba(0,184,169,0.1); }
-  .shop-item .si-emoji { font-size: 34px; margin-bottom: 6px; }
-  .shop-item .si-name { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.85); margin-bottom: 4px; }
-  .shop-item .si-price { font-size: 12px; color: var(--gold); font-weight: 700; }
-  .shop-item.owned .si-price { color: var(--teal); }
-  .section-title { font-family: 'Fredoka One'; font-size: 18px; color: var(--gold); margin-bottom: 14px; }
-
-  /* ── TOASTS ── */
-  #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 300; display: flex; flex-direction: column; gap: 8px; }
-  .toast {
-    background: #0d2b45; border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 12px; padding: 12px 18px;
-    color: white; font-size: 14px; font-weight: 700;
-    animation: slideIn .3s ease, fadeOut .4s 2.6s forwards;
-    max-width: 280px; display: flex; align-items: center; gap: 8px;
-  }
-  @keyframes slideIn { from { transform: translateX(60px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-  @keyframes fadeOut { to { opacity: 0; transform: translateX(60px); } }
-
-  /* ── EXPAND BUTTON ── */
-  .expand-btn {
-    background: linear-gradient(135deg, var(--ocean), var(--ocean2));
-    border: none; border-radius: 12px; padding: 10px 20px;
-    font-family: 'Nunito'; font-weight: 800; font-size: 13px; color: white;
-    cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 6px;
-  }
-  .expand-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(21,101,168,0.4); }
-  .expand-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-
-  /* ── SNOW GROUND ── */
-  .snow-ground {
-    position: fixed; bottom: 0; left: 0; right: 0; height: 80px;
-    background: linear-gradient(to top, rgba(200,235,255,0.12), transparent);
-    pointer-events: none; z-index: 0;
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 600px) {
-    #topbar { padding: 8px 12px; gap: 8px; }
-    .stat-pill { padding: 3px 10px; font-size: 12px; }
-    .tab-btn { padding: 6px 10px; font-size: 12px; }
-    .view { padding: 12px; }
-  }
+@media(max-width:600px){
+  #topbar{padding:7px 10px;gap:7px;}
+  .stat-pill{padding:3px 9px;font-size:11px;}
+  .tab-btn{padding:5px 8px;font-size:11px;}
+  .view{padding:10px;}
+  .cell{width:50px;height:50px;}
+  .cell img{width:38px;height:38px;}
+}
 </style>
 </head>
 <body>
-
 <div id="stars"></div>
-<div class="snow-ground"></div>
-
 <div id="app">
-  <!-- TOP BAR -->
   <div id="topbar">
-    <div class="logo">🐧 Penguin Isle</div>
-    <div class="stat-pill"><span>🐟</span> <span id="fish-count">0</span></div>
-    <div class="stat-pill"><span>⭐</span> <span id="star-count">0</span></div>
-    <div class="stat-pill"><span>🏘️</span> <span id="pop-count">0</span></div>
+    <div class="logo">
+      🐧
+      Penguin Isle
+    </div>
+    <div class="stat-pill">🐟 <span id="fish-count">0</span></div>
+    <div class="stat-pill">⭐ <span id="star-count">0</span></div>
+    <div class="stat-pill">🐧 <span id="pop-count">0</span></div>
     <div class="spacer"></div>
+    <button class="help-badge" onclick="showHelp()">? Help</button>
     <div id="nav-tabs">
-      <button class="tab-btn active" onclick="switchTab('world')">🌍 World</button>
-      <button class="tab-btn" onclick="switchTab('story')">📖 Story</button>
-      <button class="tab-btn" onclick="switchTab('minigames')">🎮 Mini-games</button>
-      <button class="tab-btn" onclick="switchTab('shop')">🛒 Shop</button>
+      <button class="tab-btn active" onclick="switchTab('world',this)">🌍 World</button>
+      <button class="tab-btn" onclick="switchTab('story',this)">📖 Story</button>
+      <button class="tab-btn" onclick="switchTab('minigames',this)">🎮 Games</button>
+      <button class="tab-btn" onclick="switchTab('shop',this)">🛒 Shop</button>
     </div>
   </div>
 
   <!-- WORLD VIEW -->
   <div id="world-view" class="view active">
+    <div id="world-instructions" class="instructions-box" style="display:none">
+      <h3>🌍 How to Build Your World</h3>
+      <ul>
+        <li><b>Select a building</b> from the toolbar below, then <b>click any empty tile</b> on the grid to place it.</li>
+        <li><b>Erase</b> a tile by selecting the 🗑️ Erase tool, then clicking the tile you want to remove.</li>
+        <li><b>Expand your world</b> by earning Fish 🐟 in mini-games and clicking the Expand button.</li>
+        <li>New buildings unlock by completing <b>Story chapters</b> or buying from the <b>Shop</b>.</li>
+        <li>Your progress is <b>auto-saved</b> — it will be here when you come back!</li>
+      </ul>
+      <button class="instructions-toggle" onclick="toggleInstructions()">Hide instructions ▲</button>
+    </div>
     <div id="toolbar">
       <div class="tool-label">Build</div>
-      <div class="tool-section" id="toolbar-items"></div>
+      <div id="toolbar-items" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"></div>
       <div class="tool-sep"></div>
       <div class="tool-label">Edit</div>
-      <div class="tool-section">
-        <button class="tool-btn erase-btn" id="erase-btn" onclick="selectTool('erase')" title="Erase">🗑️ <span>Erase</span></button>
-      </div>
+      <button class="tool-btn erase-btn" id="erase-btn" onclick="selectTool('erase')" title="Erase">
+        <span style="font-size:22px">🗑️</span><span>Erase</span>
+      </button>
       <div class="tool-sep"></div>
       <button class="expand-btn" id="expand-btn" onclick="tryExpand()">🧊 Expand World</button>
     </div>
@@ -318,10 +219,15 @@
   <!-- STORY VIEW -->
   <div id="story-view" class="view">
     <div style="max-width:820px;margin:0 auto">
-      <div style="margin-bottom:20px">
-        <div style="font-family:'Fredoka One';font-size:26px;color:var(--gold);margin-bottom:6px">📖 The Chronicles of Penguin Isle</div>
-        <div style="font-size:14px;color:rgba(255,255,255,.6)">Complete chapters to unlock new buildings, expand your world, and earn rewards!</div>
+      <div class="instructions-box" style="margin-bottom:18px">
+        <h3>📖 How Story Mode Works</h3>
+        <ul>
+          <li>Each <b>chapter</b> gives you tasks to complete on your island — like placing certain buildings or reaching a population.</li>
+          <li>When all tasks are done, click <b>Claim Reward</b> to get Fish, Stars, and unlock new buildings!</li>
+          <li>Completing a chapter <b>unlocks the next one</b> — follow Pebble the penguin's journey to build a legendary isle.</li>
+        </ul>
       </div>
+      <div style="font-family:'Fredoka One';font-size:24px;color:var(--gold);margin-bottom:16px">📖 Chronicles of Penguin Isle</div>
       <div id="chapters-container"></div>
     </div>
   </div>
@@ -329,10 +235,15 @@
   <!-- MINIGAMES VIEW -->
   <div id="minigames-view" class="view">
     <div style="max-width:820px;margin:0 auto">
-      <div style="margin-bottom:20px">
-        <div style="font-family:'Fredoka One';font-size:26px;color:var(--gold);margin-bottom:6px">🎮 Mini-games</div>
-        <div style="font-size:14px;color:rgba(255,255,255,.6)">Play to earn 🐟 Fish and ⭐ Stars to grow your island!</div>
+      <div class="instructions-box" style="margin-bottom:18px">
+        <h3>🎮 How Mini-games Work</h3>
+        <ul>
+          <li>Play any mini-game to earn <b>Fish 🐟</b> — the main currency for buying buildings and expanding your world.</li>
+          <li>Each game has its own controls explained when you open it. You can replay them as many times as you want!</li>
+          <li>The <b>Penguin Identifier</b> quiz tests your real penguin knowledge — get it right for bonus fish!</li>
+        </ul>
       </div>
+      <div style="font-family:'Fredoka One';font-size:24px;color:var(--gold);margin-bottom:16px">🎮 Mini-games</div>
       <div class="minigame-grid" id="minigame-list"></div>
     </div>
   </div>
@@ -340,17 +251,22 @@
   <!-- SHOP VIEW -->
   <div id="shop-view" class="view">
     <div style="max-width:820px;margin:0 auto">
-      <div style="margin-bottom:20px">
-        <div style="font-family:'Fredoka One';font-size:26px;color:var(--gold);margin-bottom:6px">🛒 Shop</div>
-        <div style="font-size:14px;color:rgba(255,255,255,.6)">Spend your 🐟 Fish to unlock new buildings and decorations!</div>
+      <div class="instructions-box" style="margin-bottom:18px">
+        <h3>🛒 How the Shop Works</h3>
+        <ul>
+          <li>Spend <b>Fish 🐟</b> (earned from mini-games) to permanently unlock buildings for your toolbar.</li>
+          <li>Once bought, you can place that building on your island as many times as you like — for free!</li>
+          <li>Some buildings are only unlockable through <b>Story chapters</b>, not the shop.</li>
+        </ul>
       </div>
+      <div style="font-family:'Fredoka One';font-size:24px;color:var(--gold);margin-bottom:16px">🛒 Shop</div>
       <div id="shop-content"></div>
     </div>
   </div>
 </div>
 
 <!-- MODAL -->
-<div id="modal-overlay" onclick="closeModal(event)">
+<div id="modal-overlay" onclick="closeModalOutside(event)">
   <div id="modal-box">
     <button id="modal-close" onclick="closeModal()">✕</button>
     <div id="modal-title"></div>
@@ -358,591 +274,901 @@
   </div>
 </div>
 
-<!-- TOASTS -->
 <div id="toast-container"></div>
 
 <script>
-// ═══════════════════════════════════════════
-//  GAME DATA
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════
+//  INLINE SVG ILLUSTRATIONS (no external URLs)
+// ══════════════════════════════════════════
 
+function svgURI(svgContent) {
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgContent);
+}
+
+// Generic emoji tile for buildings
+function buildingSVG(id, emoji, color='#00b8a9') {
+  return svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><rect width="60" height="60" rx="10" fill="${color}" fill-opacity=".18"/><text y="43" x="30" text-anchor="middle" font-size="36" font-family="serif">${emoji}</text></svg>`);
+}
+
+// Hand-drawn SVG penguin illustrations — each species has unique markings
+const PENGUIN_SVG = {
+
+  emperor: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+    <rect width="200" height="260" fill="#1a3a5c"/>
+    <!-- sky gradient -->
+    <ellipse cx="100" cy="30" rx="100" ry="40" fill="#0d2040" opacity=".6"/>
+    <!-- snow ground -->
+    <ellipse cx="100" cy="240" rx="110" ry="30" fill="#d0eeff" opacity=".4"/>
+    <!-- body -->
+    <ellipse cx="100" cy="155" rx="52" ry="75" fill="#111"/>
+    <!-- white belly -->
+    <ellipse cx="100" cy="165" rx="34" ry="58" fill="#f5f5f5"/>
+    <!-- yellow chest patch -->
+    <ellipse cx="100" cy="125" rx="22" ry="18" fill="#f5c842" opacity=".9"/>
+    <!-- head -->
+    <ellipse cx="100" cy="85" rx="40" ry="38" fill="#111"/>
+    <!-- white face -->
+    <ellipse cx="100" cy="92" rx="26" ry="24" fill="#f5f5f5"/>
+    <!-- yellow ear patches -->
+    <ellipse cx="65" cy="80" rx="12" ry="20" fill="#f5c842"/>
+    <ellipse cx="135" cy="80" rx="12" ry="20" fill="#f5c842"/>
+    <!-- eyes -->
+    <circle cx="88" cy="84" r="6" fill="#111"/>
+    <circle cx="112" cy="84" r="6" fill="#111"/>
+    <circle cx="90" cy="82" r="2" fill="white"/>
+    <circle cx="114" cy="82" r="2" fill="white"/>
+    <!-- beak -->
+    <ellipse cx="100" cy="97" rx="9" ry="5" fill="#f5a800"/>
+    <line x1="91" y1="97" x2="109" y2="97" stroke="#c87000" stroke-width="1.5"/>
+    <!-- flippers -->
+    <ellipse cx="52" cy="155" rx="14" ry="40" fill="#111" transform="rotate(-12,52,155)"/>
+    <ellipse cx="148" cy="155" rx="14" ry="40" fill="#111" transform="rotate(12,148,155)"/>
+    <!-- feet -->
+    <ellipse cx="88" cy="228" rx="14" ry="7" fill="#f5a800"/>
+    <ellipse cx="112" cy="228" rx="14" ry="7" fill="#f5a800"/>
+    <!-- label -->
+    <text x="100" y="252" text-anchor="middle" font-size="11" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">EMPEROR</text>
+  </svg>`),
+
+  king: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+    <rect width="200" height="260" fill="#1e3050"/>
+    <ellipse cx="100" cy="240" rx="110" ry="28" fill="#c8e8ff" opacity=".35"/>
+    <!-- body -->
+    <ellipse cx="100" cy="158" rx="50" ry="72" fill="#111"/>
+    <!-- white belly -->
+    <ellipse cx="100" cy="168" rx="32" ry="55" fill="#f0f0f0"/>
+    <!-- orange chest — more vivid than emperor -->
+    <ellipse cx="100" cy="122" rx="20" ry="16" fill="#ff8c00"/>
+    <!-- head -->
+    <ellipse cx="100" cy="87" rx="38" ry="36" fill="#111"/>
+    <!-- white face oval -->
+    <ellipse cx="100" cy="93" rx="24" ry="22" fill="#f0f0f0"/>
+    <!-- vivid orange ear patches -->
+    <ellipse cx="64" cy="78" rx="11" ry="19" fill="#ff8c00"/>
+    <ellipse cx="136" cy="78" rx="11" ry="19" fill="#ff8c00"/>
+    <!-- eyes -->
+    <circle cx="89" cy="85" r="5.5" fill="#111"/>
+    <circle cx="111" cy="85" r="5.5" fill="#111"/>
+    <circle cx="90.5" cy="83.5" r="2" fill="white"/>
+    <circle cx="112.5" cy="83.5" r="2" fill="white"/>
+    <!-- beak — longer, hooked -->
+    <path d="M91,97 Q100,108 109,97 Q100,100 91,97Z" fill="#f5a800"/>
+    <path d="M91,97 Q100,102 109,97" stroke="#c87000" stroke-width="1" fill="none"/>
+    <!-- flippers -->
+    <ellipse cx="53" cy="158" rx="13" ry="38" fill="#111" transform="rotate(-10,53,158)"/>
+    <ellipse cx="147" cy="158" rx="13" ry="38" fill="#111" transform="rotate(10,147,158)"/>
+    <!-- feet -->
+    <ellipse cx="88" cy="228" rx="13" ry="6" fill="#f5a800"/>
+    <ellipse cx="112" cy="228" rx="13" ry="6" fill="#f5a800"/>
+    <text x="100" y="252" text-anchor="middle" font-size="11" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">KING</text>
+  </svg>`),
+
+  adelie: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+    <rect width="200" height="260" fill="#0e2840"/>
+    <!-- icy blue bg hills -->
+    <ellipse cx="100" cy="240" rx="110" ry="28" fill="#b8deff" opacity=".3"/>
+    <ellipse cx="30" cy="200" rx="40" ry="25" fill="#ffffff" opacity=".08"/>
+    <!-- body -->
+    <ellipse cx="100" cy="160" rx="46" ry="70" fill="#111"/>
+    <!-- white belly -->
+    <ellipse cx="100" cy="170" rx="30" ry="54" fill="#f5f5f5"/>
+    <!-- head — all black, no ear patches — key Adélie feature -->
+    <ellipse cx="100" cy="88" rx="36" ry="34" fill="#111"/>
+    <!-- white eye rings — distinctive Adélie feature -->
+    <circle cx="89" cy="85" r="10" fill="white"/>
+    <circle cx="111" cy="85" r="10" fill="white"/>
+    <!-- eyes -->
+    <circle cx="89" cy="85" r="6" fill="#111"/>
+    <circle cx="111" cy="85" r="6" fill="#111"/>
+    <circle cx="91" cy="83" r="2.5" fill="white"/>
+    <circle cx="113" cy="83" r="2.5" fill="white"/>
+    <!-- small orange beak -->
+    <ellipse cx="100" cy="98" rx="7" ry="4" fill="#e07000"/>
+    <line x1="93" y1="98" x2="107" y2="98" stroke="#a05000" stroke-width="1.2"/>
+    <!-- flippers -->
+    <ellipse cx="55" cy="160" rx="12" ry="36" fill="#111" transform="rotate(-10,55,160)"/>
+    <ellipse cx="145" cy="160" rx="12" ry="36" fill="#111" transform="rotate(10,145,160)"/>
+    <!-- feet -->
+    <ellipse cx="88" cy="228" rx="13" ry="6" fill="#e07000"/>
+    <ellipse cx="112" cy="228" rx="13" ry="6" fill="#e07000"/>
+    <text x="100" y="252" text-anchor="middle" font-size="11" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">ADÉLIE</text>
+  </svg>`),
+
+  chinstrap: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+    <rect width="200" height="260" fill="#162840"/>
+    <ellipse cx="100" cy="240" rx="110" ry="28" fill="#c0e0ff" opacity=".3"/>
+    <!-- body -->
+    <ellipse cx="100" cy="160" rx="46" ry="70" fill="#111"/>
+    <ellipse cx="100" cy="170" rx="30" ry="54" fill="#f5f5f5"/>
+    <!-- head — white face -->
+    <ellipse cx="100" cy="88" rx="36" ry="34" fill="#111"/>
+    <ellipse cx="100" cy="95" rx="28" ry="25" fill="white"/>
+    <!-- THE chinstrap — thin black line under chin -->
+    <path d="M72,108 Q100,116 128,108" stroke="#111" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <!-- eyes -->
+    <circle cx="89" cy="85" r="6" fill="#111"/>
+    <circle cx="111" cy="85" r="6" fill="#111"/>
+    <circle cx="90.5" cy="83" r="2.2" fill="white"/>
+    <circle cx="112.5" cy="83" r="2.2" fill="white"/>
+    <!-- beak -->
+    <ellipse cx="100" cy="99" rx="7" ry="4.5" fill="#333"/>
+    <!-- flippers -->
+    <ellipse cx="55" cy="160" rx="12" ry="36" fill="#111" transform="rotate(-10,55,160)"/>
+    <ellipse cx="145" cy="160" rx="12" ry="36" fill="#111" transform="rotate(10,145,160)"/>
+    <ellipse cx="88" cy="228" rx="13" ry="6" fill="#555"/>
+    <ellipse cx="112" cy="228" rx="13" ry="6" fill="#555"/>
+    <text x="100" y="252" text-anchor="middle" font-size="10" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">CHINSTRAP</text>
+  </svg>`),
+
+  gentoo: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+    <rect width="200" height="260" fill="#1a3850"/>
+    <ellipse cx="100" cy="240" rx="110" ry="28" fill="#c0e0ff" opacity=".3"/>
+    <!-- body -->
+    <ellipse cx="100" cy="160" rx="50" ry="72" fill="#111"/>
+    <ellipse cx="100" cy="170" rx="33" ry="56" fill="#f0f0f0"/>
+    <!-- head -->
+    <ellipse cx="100" cy="87" rx="38" ry="36" fill="#111"/>
+    <!-- white head stripe — Gentoo's key feature -->
+    <path d="M62,72 Q100,60 138,72" stroke="white" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <!-- white face -->
+    <ellipse cx="100" cy="96" rx="25" ry="20" fill="#f0f0f0"/>
+    <!-- eyes -->
+    <circle cx="89" cy="87" r="6" fill="#111"/>
+    <circle cx="111" cy="87" r="6" fill="#111"/>
+    <circle cx="90.5" cy="85" r="2.2" fill="white"/>
+    <circle cx="112.5" cy="85" r="2.2" fill="white"/>
+    <!-- bright orange-red beak — Gentoo distinctive -->
+    <path d="M91,100 Q100,110 109,100 L105,96 Q100,98 95,96Z" fill="#ff5500"/>
+    <!-- flippers -->
+    <ellipse cx="53" cy="160" rx="13" ry="40" fill="#111" transform="rotate(-10,53,160)"/>
+    <ellipse cx="147" cy="160" rx="13" ry="40" fill="#111" transform="rotate(10,147,160)"/>
+    <ellipse cx="88" cy="228" rx="14" ry="6" fill="#ff5500"/>
+    <ellipse cx="112" cy="228" rx="14" ry="6" fill="#ff5500"/>
+    <text x="100" y="252" text-anchor="middle" font-size="11" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">GENTOO</text>
+  </svg>`),
+
+  macaroni: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+    <rect width="200" height="260" fill="#1a3050"/>
+    <ellipse cx="100" cy="240" rx="110" ry="28" fill="#c0e0ff" opacity=".3"/>
+    <!-- body -->
+    <ellipse cx="100" cy="158" rx="48" ry="70" fill="#111"/>
+    <ellipse cx="100" cy="168" rx="31" ry="54" fill="#f0f0f0"/>
+    <!-- head -->
+    <ellipse cx="100" cy="88" rx="37" ry="35" fill="#111"/>
+    <!-- THE macaroni: vivid yellow-orange crest flowing back -->
+    <path d="M100,55 Q80,50 60,48 Q75,58 72,72 Q85,62 100,60Z" fill="#ffbb00"/>
+    <path d="M100,55 Q120,50 140,48 Q125,58 128,72 Q115,62 100,60Z" fill="#ffbb00"/>
+    <!-- wispy crest tips -->
+    <path d="M60,48 Q50,40 45,32" stroke="#ffbb00" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M140,48 Q150,40 155,32" stroke="#ffbb00" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <!-- white chin -->
+    <ellipse cx="100" cy="100" rx="22" ry="16" fill="#f0f0f0"/>
+    <!-- eyes -->
+    <circle cx="88" cy="86" r="6" fill="#111"/>
+    <circle cx="112" cy="86" r="6" fill="#111"/>
+    <circle cx="89.5" cy="84" r="2.2" fill="white"/>
+    <circle cx="113.5" cy="84" r="2.2" fill="white"/>
+    <!-- large orange beak -->
+    <path d="M90,99 Q100,112 110,99 L106,95 Q100,98 94,95Z" fill="#ff8800"/>
+    <!-- flippers -->
+    <ellipse cx="54" cy="158" rx="13" ry="38" fill="#111" transform="rotate(-10,54,158)"/>
+    <ellipse cx="146" cy="158" rx="13" ry="38" fill="#111" transform="rotate(10,146,158)"/>
+    <ellipse cx="88" cy="228" rx="13" ry="6" fill="#ff8800"/>
+    <ellipse cx="112" cy="228" rx="13" ry="6" fill="#ff8800"/>
+    <text x="100" y="252" text-anchor="middle" font-size="10" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">MACARONI</text>
+  </svg>`),
+
+  rockhopper: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+    <rect width="200" height="260" fill="#152840"/>
+    <ellipse cx="100" cy="240" rx="110" ry="28" fill="#c0e0ff" opacity=".3"/>
+    <!-- body -->
+    <ellipse cx="100" cy="160" rx="46" ry="68" fill="#111"/>
+    <ellipse cx="100" cy="170" rx="30" ry="52" fill="#f0f0f0"/>
+    <!-- head -->
+    <ellipse cx="100" cy="90" rx="36" ry="34" fill="#111"/>
+    <!-- spiky yellow-black eyebrow feathers — rockhopper key feature -->
+    <!-- yellow base stripe -->
+    <path d="M64,78 Q100,68 136,78" stroke="#ffdd00" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <!-- spiky black tips on top of yellow -->
+    <line x1="68" y1="77" x2="60" y2="60" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="78" y1="73" x2="72" y2="55" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="122" y1="73" x2="128" y2="55" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="132" y1="77" x2="140" y2="60" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+    <!-- red eyes — distinctive! -->
+    <circle cx="88" cy="87" r="7" fill="#cc0000"/>
+    <circle cx="112" cy="87" r="7" fill="#cc0000"/>
+    <circle cx="88" cy="87" r="4" fill="#111"/>
+    <circle cx="112" cy="87" r="4" fill="#111"/>
+    <circle cx="89" cy="85.5" r="1.8" fill="white"/>
+    <circle cx="113" cy="85.5" r="1.8" fill="white"/>
+    <!-- orange beak -->
+    <path d="M91,100 Q100,112 109,100 L106,96 Q100,99 94,96Z" fill="#ff7700"/>
+    <!-- flippers -->
+    <ellipse cx="55" cy="160" rx="12" ry="36" fill="#111" transform="rotate(-10,55,160)"/>
+    <ellipse cx="145" cy="160" rx="12" ry="36" fill="#111" transform="rotate(10,145,160)"/>
+    <ellipse cx="88" cy="228" rx="12" ry="6" fill="#ff7700"/>
+    <ellipse cx="112" cy="228" rx="12" ry="6" fill="#ff7700"/>
+    <text x="100" y="252" text-anchor="middle" font-size="9.5" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">ROCKHOPPER</text>
+  </svg>`),
+
+  little: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+    <rect width="200" height="260" fill="#1a3855"/>
+    <ellipse cx="100" cy="240" rx="110" ry="28" fill="#c0e0ff" opacity=".3"/>
+    <!-- Little penguin is small and BLUE not black -->
+    <!-- body — smaller, blue-grey -->
+    <ellipse cx="100" cy="168" rx="38" ry="58" fill="#3a5e8a"/>
+    <ellipse cx="100" cy="176" rx="24" ry="44" fill="#f5f5f5"/>
+    <!-- head — blue not black -->
+    <ellipse cx="100" cy="102" rx="28" ry="26" fill="#3a5e8a"/>
+    <!-- white chin -->
+    <ellipse cx="100" cy="112" rx="18" ry="14" fill="#f5f5f5"/>
+    <!-- eyes -->
+    <circle cx="91" cy="99" r="5" fill="#111"/>
+    <circle cx="109" cy="99" r="5" fill="#111"/>
+    <circle cx="92" cy="97.5" r="1.8" fill="white"/>
+    <circle cx="110" cy="97.5" r="1.8" fill="white"/>
+    <!-- small grey beak -->
+    <path d="M94,111 Q100,118 106,111 L104,108 Q100,110 96,108Z" fill="#555"/>
+    <!-- flippers — blue -->
+    <ellipse cx="63" cy="168" rx="10" ry="30" fill="#3a5e8a" transform="rotate(-8,63,168)"/>
+    <ellipse cx="137" cy="168" rx="10" ry="30" fill="#3a5e8a" transform="rotate(8,137,168)"/>
+    <ellipse cx="90" cy="224" rx="11" ry="5" fill="#555"/>
+    <ellipse cx="110" cy="224" rx="11" ry="5" fill="#555"/>
+    <!-- label note about size -->
+    <text x="100" y="248" text-anchor="middle" font-size="9" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">LITTLE (FAIRY)</text>
+  </svg>`),
+
+  african: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+    <!-- warm sandy background — Africa! -->
+    <rect width="200" height="260" fill="#2a3a20"/>
+    <ellipse cx="100" cy="240" rx="110" ry="28" fill="#d4c090" opacity=".4"/>
+    <!-- rock hint -->
+    <ellipse cx="30" cy="220" rx="30" ry="16" fill="#8a8070" opacity=".5"/>
+    <!-- body -->
+    <ellipse cx="100" cy="158" rx="48" ry="70" fill="#111"/>
+    <ellipse cx="100" cy="168" rx="31" ry="54" fill="#f5f5f5"/>
+    <!-- African penguin: single black horseshoe band across chest -->
+    <path d="M68,138 Q100,148 132,138 Q132,152 100,158 Q68,152 68,138Z" fill="#111"/>
+    <!-- black spots on belly — African penguin unique -->
+    <circle cx="94" cy="170" r="4" fill="#111" opacity=".7"/>
+    <circle cx="108" cy="178" r="3.5" fill="#111" opacity=".7"/>
+    <circle cx="99" cy="188" r="3" fill="#111" opacity=".6"/>
+    <!-- head -->
+    <ellipse cx="100" cy="87" rx="37" ry="35" fill="#111"/>
+    <!-- white face with black mask -->
+    <ellipse cx="100" cy="93" rx="26" ry="22" fill="#f0f0f0"/>
+    <!-- pink gland above eye — African penguin feature -->
+    <ellipse cx="84" cy="76" rx="9" ry="5" fill="#ff9999" opacity=".9"/>
+    <ellipse cx="116" cy="76" rx="9" ry="5" fill="#ff9999" opacity=".9"/>
+    <!-- eyes -->
+    <circle cx="89" cy="86" r="6" fill="#111"/>
+    <circle cx="111" cy="86" r="6" fill="#111"/>
+    <circle cx="90.5" cy="84" r="2.2" fill="white"/>
+    <circle cx="112.5" cy="84" r="2.2" fill="white"/>
+    <!-- beak with band -->
+    <path d="M91,99 Q100,110 109,99 L106,95 Q100,98 94,95Z" fill="#555"/>
+    <line x1="91" y1="99" x2="109" y2="99" stroke="white" stroke-width="1.2"/>
+    <!-- flippers -->
+    <ellipse cx="54" cy="158" rx="13" ry="38" fill="#111" transform="rotate(-10,54,158)"/>
+    <ellipse cx="146" cy="158" rx="13" ry="38" fill="#111" transform="rotate(10,146,158)"/>
+    <ellipse cx="88" cy="228" rx="13" ry="6" fill="#555"/>
+    <ellipse cx="112" cy="228" rx="13" ry="6" fill="#555"/>
+    <text x="100" y="252" text-anchor="middle" font-size="10" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">AFRICAN</text>
+  </svg>`),
+};
+
+// Building tiles — emoji on coloured backgrounds, always visible
+const BUILDING_IMGS = {
+  penguin:    PENGUIN_SVG.emperor,
+  igloo:      buildingSVG('igloo',  '🏠', '#4a8fbb'),
+  fish:       buildingSVG('fish',   '🐟', '#2196b8'),
+  tree:       buildingSVG('tree',   '🌲', '#2d7a3a'),
+  snowman:    buildingSVG('snowman','⛄', '#80c8e8'),
+  castle:     buildingSVG('castle', '🏰', '#7a5faa'),
+  shop_b:     buildingSVG('shop_b', '🏪', '#e09020'),
+  mountain:   buildingSVG('mtn',   '🏔️', '#5577aa'),
+  lighthouse: buildingSVG('lhouse','🗼', '#d4a820'),
+  school:     buildingSVG('school', '🏫', '#00a898'),
+  hospital:   buildingSVG('hosp',  '🏥', '#cc5555'),
+  park:       buildingSVG('park',   '🎠', '#3a9a60'),
+  cave:       buildingSVG('cave',   '🗻', '#445577'),
+  crystals:   buildingSVG('cryst', '💎', '#66aaee'),
+  boat:       buildingSVG('boat',   '⛵', '#1a7acc'),
+  glacier:    buildingSVG('glac',  '🧊', '#55aacc'),
+};
+
+// For story chapter icons, minigame thumbnails etc.
+const IMG = {
+  emperor:   PENGUIN_SVG.emperor,
+  emperor2:  PENGUIN_SVG.emperor,
+  adelie:    PENGUIN_SVG.adelie,
+  chinstrap: PENGUIN_SVG.chinstrap,
+  gentoo:    PENGUIN_SVG.gentoo,
+  macaroni:  PENGUIN_SVG.macaroni,
+  rockhopper:PENGUIN_SVG.rockhopper,
+  king:      PENGUIN_SVG.king,
+  little:    PENGUIN_SVG.little,
+  african:   PENGUIN_SVG.african,
+  igloo:     BUILDING_IMGS.igloo,
+  iceberg:   BUILDING_IMGS.glacier,
+  pine:      BUILDING_IMGS.tree,
+  mountain:  BUILDING_IMGS.mountain,
+};
+
+// ══════════════════════════════════════════
+//  GAME DATA
+// ══════════════════════════════════════════
 const BUILDINGS = [
-  { id:'penguin',   emoji:'🐧', name:'Penguin',     cost:0,    pop:1, cat:'penguins', unlocked:true  },
-  { id:'igloo',     emoji:'🏠', name:'Igloo',       cost:20,   pop:3, cat:'homes',    unlocked:true  },
-  { id:'fish',      emoji:'🐟', name:'Fish Pond',   cost:30,   pop:0, cat:'nature',   unlocked:true  },
-  { id:'tree',      emoji:'🌲', name:'Pine Tree',   cost:15,   pop:0, cat:'nature',   unlocked:true  },
-  { id:'snowman',   emoji:'⛄', name:'Snowman',     cost:25,   pop:0, cat:'deco',     unlocked:false },
-  { id:'castle',    emoji:'🏰', name:'Ice Castle',  cost:120,  pop:10,cat:'homes',    unlocked:false },
-  { id:'shop_b',    emoji:'🏪', name:'Fish Market', cost:80,   pop:0, cat:'business', unlocked:false },
-  { id:'mountain',  emoji:'🏔️', name:'Mountain',    cost:60,   pop:0, cat:'nature',   unlocked:false },
-  { id:'lighthouse',emoji:'🗼', name:'Lighthouse',  cost:100,  pop:2, cat:'deco',     unlocked:false },
-  { id:'school',    emoji:'🏫', name:'Penguin School',cost:90, pop:5, cat:'business', unlocked:false },
-  { id:'hospital',  emoji:'🏥', name:'Clinic',      cost:110,  pop:3, cat:'business', unlocked:false },
-  { id:'park',      emoji:'🎠', name:'Snow Park',   cost:70,   pop:0, cat:'deco',     unlocked:false },
-  { id:'cave',      emoji:'🗻', name:'Ice Cave',    cost:50,   pop:0, cat:'nature',   unlocked:false },
-  { id:'crystals',  emoji:'💎', name:'Ice Crystals',cost:45,   pop:0, cat:'deco',     unlocked:false },
-  { id:'boat',      emoji:'⛵', name:'Sailboat',    cost:85,   pop:1, cat:'deco',     unlocked:false },
-  { id:'glacier',   emoji:'🧊', name:'Glacier',     cost:55,   pop:0, cat:'nature',   unlocked:false },
+  {id:'penguin',  emoji:'🐧', name:'Penguin',      cost:0,   pop:1, cat:'penguins', unlocked:true},
+  {id:'igloo',    emoji:'🏠', name:'Igloo',         cost:20,  pop:3, cat:'homes',    unlocked:true},
+  {id:'fish',     emoji:'🐟', name:'Fish Pond',     cost:30,  pop:0, cat:'nature',   unlocked:true},
+  {id:'tree',     emoji:'🌲', name:'Pine Tree',     cost:15,  pop:0, cat:'nature',   unlocked:true},
+  {id:'snowman',  emoji:'⛄', name:'Snowman',       cost:25,  pop:0, cat:'deco',     unlocked:false},
+  {id:'castle',   emoji:'🏰', name:'Ice Castle',    cost:120, pop:10,cat:'homes',    unlocked:false},
+  {id:'shop_b',   emoji:'🏪', name:'Fish Market',   cost:80,  pop:0, cat:'business', unlocked:false},
+  {id:'mountain', emoji:'🏔️', name:'Mountain',      cost:60,  pop:0, cat:'nature',   unlocked:false},
+  {id:'lighthouse',emoji:'🗼',name:'Lighthouse',    cost:100, pop:2, cat:'deco',     unlocked:false},
+  {id:'school',   emoji:'🏫', name:'Penguin School',cost:90,  pop:5, cat:'business', unlocked:false},
+  {id:'hospital', emoji:'🏥', name:'Clinic',        cost:110, pop:3, cat:'business', unlocked:false},
+  {id:'park',     emoji:'🎠', name:'Snow Park',     cost:70,  pop:0, cat:'deco',     unlocked:false},
+  {id:'cave',     emoji:'🗻', name:'Ice Cave',      cost:50,  pop:0, cat:'nature',   unlocked:false},
+  {id:'crystals', emoji:'💎', name:'Ice Crystals',  cost:45,  pop:0, cat:'deco',     unlocked:false},
+  {id:'boat',     emoji:'⛵', name:'Sailboat',      cost:85,  pop:1, cat:'deco',     unlocked:false},
+  {id:'glacier',  emoji:'🧊', name:'Glacier',       cost:55,  pop:0, cat:'nature',   unlocked:false},
 ];
 
 const CHAPTERS = [
-  {
-    id: 'ch1', title: 'A Penguin Arrives', icon: '🐧', unlocked: true,
-    story: "It was a cold and blustery morning on the ice floe when the first penguin waddled ashore. With nothing but a dream and a fish, little Pebble planted her flippers in the snow and declared: \"This shall be our home!\" But building a civilization takes more than ambition...",
-    tasks: [
-      { id:'place_penguin', label:'Place your first Penguin', target:1, trackKey:'penguins_placed' },
-      { id:'place_igloo',   label:'Build an Igloo',           target:1, trackKey:'igloos_placed'   },
-      { id:'place_fish',    label:'Add a Fish Pond',          target:1, trackKey:'fish_placed'     },
-    ],
-    reward: { fish: 50, stars: 5, unlocks: ['snowman','cave'] },
-    rewardText: '50 🐟 · 5 ⭐ · Unlocks Snowman & Ice Cave'
-  },
-  {
-    id: 'ch2', title: 'Growing Pains', icon: '🏘️', unlocked: false,
-    story: "Word spread through the southern ice shelf — Penguin Isle was real! Penguins began arriving by the dozen, waddling in from every direction with their little backpacks and big dreams. But Pebble realized the island needed proper infrastructure...",
-    tasks: [
-      { id:'pop_10',       label:'Reach a population of 10', target:10, trackKey:'population'    },
-      { id:'igloos_3',     label:'Build 3 Igloos',           target:3,  trackKey:'igloos_placed' },
-      { id:'snowman_1',    label:'Build a Snowman',          target:1,  trackKey:'snowman_placed'},
-    ],
-    reward: { fish: 100, stars: 10, unlocks: ['castle','shop_b','school'] },
-    rewardText: '100 🐟 · 10 ⭐ · Unlocks Ice Castle, Fish Market & School'
-  },
-  {
-    id: 'ch3', title: 'Commerce & Culture', icon: '🏪', unlocked: false,
-    story: "The Fish Market opened on a Tuesday and changed everything. Suddenly penguins could trade their catches for goods, and a little economy bloomed on the ice. Elder Flippers declared it the greatest thing since the invention of the belly slide.",
-    tasks: [
-      { id:'market_1',    label:'Build a Fish Market',  target:1, trackKey:'shop_b_placed'    },
-      { id:'school_1',    label:'Build a School',       target:1, trackKey:'school_placed'     },
-      { id:'fish_3',      label:'Have 3 Fish Ponds',    target:3, trackKey:'fish_placed'       },
-    ],
-    reward: { fish: 150, stars: 15, unlocks: ['lighthouse','hospital','park'] },
-    rewardText: '150 🐟 · 15 ⭐ · Unlocks Lighthouse, Clinic & Snow Park'
-  },
-  {
-    id: 'ch4', title: 'The Great Blizzard', icon: '❄️', unlocked: false,
-    story: "On the night of the winter solstice, a legendary blizzard descended upon Penguin Isle. The winds howled, the snow swirled, and even the bravest penguins huddled inside their igloos. But when the storm cleared, something magical glittered in the ice...",
-    tasks: [
-      { id:'crystals_2',  label:'Find 2 Ice Crystal deposits', target:2, trackKey:'crystals_placed' },
-      { id:'lighthouse_1',label:'Build a Lighthouse',          target:1, trackKey:'lighthouse_placed'},
-      { id:'pop_25',      label:'Reach a population of 25',    target:25, trackKey:'population'     },
-    ],
-    reward: { fish: 200, stars: 20, unlocks: ['mountain','glacier','boat'] },
-    rewardText: '200 🐟 · 20 ⭐ · Unlocks Mountain, Glacier & Sailboat'
-  },
-  {
-    id: 'ch5', title: 'Isle of Legends', icon: '🏰', unlocked: false,
-    story: "Years passed. The little ice floe grew into a thriving island nation, known across all the southern oceans. Penguins came from as far as the equator (they were very lost) to marvel at the Ice Castle, the glowing lighthouse, and most importantly — the legendary Fish Market's daily specials.",
-    tasks: [
-      { id:'castle_1',    label:'Build the Ice Castle',   target:1, trackKey:'castle_placed'   },
-      { id:'mountain_1',  label:'Place a Mountain',       target:1, trackKey:'mountain_placed' },
-      { id:'pop_50',      label:'Reach a population of 50',target:50,trackKey:'population'     },
-    ],
-    reward: { fish: 500, stars: 50, unlocks: [] },
-    rewardText: '500 🐟 · 50 ⭐ · You\'ve built a legendary island! 🏆'
-  },
+  {id:'ch1',title:'A Penguin Arrives',icon:IMG.emperor2,unlocked:true,
+   story:"It was a cold and blustery morning on the ice floe when the first penguin waddled ashore. With nothing but a dream and a fish, little Pebble planted her flippers in the snow and declared: \"This shall be our home!\" But building a civilization takes more than ambition — it takes igloos.",
+   tasks:[
+     {id:'t1',label:'Place your first Penguin',target:1,trackKey:'penguin_placed'},
+     {id:'t2',label:'Build an Igloo',target:1,trackKey:'igloo_placed'},
+     {id:'t3',label:'Add a Fish Pond',target:1,trackKey:'fish_placed'},
+   ],
+   reward:{fish:50,stars:5,unlocks:['snowman','cave']},
+   rewardText:'50 🐟 · 5 ⭐ · Unlocks Snowman & Ice Cave'},
+  {id:'ch2',title:'Growing Pains',icon:IMG.adelie,unlocked:false,
+   story:"Word spread through the southern ice shelf — Penguin Isle was real! Penguins began arriving by the dozen, waddling in from every direction with their little backpacks and big dreams. Pebble quickly realized the island needed more homes and a bit of festive cheer.",
+   tasks:[
+     {id:'t1',label:'Reach a population of 10',target:10,trackKey:'population'},
+     {id:'t2',label:'Build 3 Igloos',target:3,trackKey:'igloo_placed'},
+     {id:'t3',label:'Place a Snowman',target:1,trackKey:'snowman_placed'},
+   ],
+   reward:{fish:100,stars:10,unlocks:['castle','shop_b','school']},
+   rewardText:'100 🐟 · 10 ⭐ · Unlocks Ice Castle, Fish Market & School'},
+  {id:'ch3',title:'Commerce & Culture',icon:IMG.gentoo,unlocked:false,
+   story:"The Fish Market opened on a Tuesday and changed everything. Suddenly penguins could trade their catches for goods, and a little economy bloomed on the ice. Elder Flippers declared it the greatest thing since the invention of the belly slide.",
+   tasks:[
+     {id:'t1',label:'Build a Fish Market',target:1,trackKey:'shop_b_placed'},
+     {id:'t2',label:'Build a Penguin School',target:1,trackKey:'school_placed'},
+     {id:'t3',label:'Have 3 Fish Ponds',target:3,trackKey:'fish_placed'},
+   ],
+   reward:{fish:150,stars:15,unlocks:['lighthouse','hospital','park']},
+   rewardText:'150 🐟 · 15 ⭐ · Unlocks Lighthouse, Clinic & Snow Park'},
+  {id:'ch4',title:'The Great Blizzard',icon:IMG.chinstrap,unlocked:false,
+   story:"On the night of the winter solstice, a legendary blizzard descended upon Penguin Isle. The winds howled, the snow swirled, and even the bravest penguins huddled inside their igloos. But when the storm cleared, something magical glittered in the ice...",
+   tasks:[
+     {id:'t1',label:'Place 2 Ice Crystal deposits',target:2,trackKey:'crystals_placed'},
+     {id:'t2',label:'Build a Lighthouse',target:1,trackKey:'lighthouse_placed'},
+     {id:'t3',label:'Reach a population of 25',target:25,trackKey:'population'},
+   ],
+   reward:{fish:200,stars:20,unlocks:['mountain','glacier','boat']},
+   rewardText:'200 🐟 · 20 ⭐ · Unlocks Mountain, Glacier & Sailboat'},
+  {id:'ch5',title:'Isle of Legends',icon:IMG.king,unlocked:false,
+   story:"Years passed. The little ice floe grew into a thriving island nation, known across all the southern oceans. Penguins came from as far as the equator (they were very lost) to marvel at the Ice Castle, the glowing lighthouse, and the Fish Market's legendary daily specials.",
+   tasks:[
+     {id:'t1',label:'Build the Ice Castle',target:1,trackKey:'castle_placed'},
+     {id:'t2',label:'Place a Mountain',target:1,trackKey:'mountain_placed'},
+     {id:'t3',label:'Reach a population of 50',target:50,trackKey:'population'},
+   ],
+   reward:{fish:500,stars:50,unlocks:[]},
+   rewardText:'500 🐟 · 50 ⭐ · You built a legendary island! 🏆'},
 ];
 
 const MINIGAMES = [
-  { id:'fishcatch',  name:'Fish Catch',      icon:'🎣', desc:'Tap fish as they swim by! The faster the better.', reward:'5–25 🐟' },
-  { id:'iceslide',   name:'Ice Slide',       icon:'🛷', desc:'Guide your penguin down the mountain, dodge the rocks!', reward:'10–40 🐟' },
-  { id:'snowballs',  name:'Snowball Toss',   icon:'❄️', desc:'Hit the targets with perfectly timed snowballs.', reward:'8–30 🐟' },
-  { id:'memory',     name:'Ice Memory',      icon:'🧊', desc:'Match the pairs of arctic animals before time runs out.', reward:'15–50 🐟' },
-  { id:'trivia',     name:'Penguin Trivia',  icon:'🐧', desc:'Test your penguin knowledge for fishy rewards!', reward:'5–20 🐟' },
+  {id:'fishcatch', name:'Fish Catch',       img:buildingSVG('f','🎣','#2196b8'), desc:'Tap fish as they swim by! The faster, the better.', reward:'5–25 🐟', howto:'Click/tap the fish emojis on screen before they swim off!'},
+  {id:'iceslide',  name:'Ice Slide',        img:buildingSVG('i','🛷','#00b8a9'), desc:'Guide your penguin down the slope and dodge rocks!', reward:'10–40 🐟', howto:'Use ← → arrow keys or the on-screen buttons to steer.'},
+  {id:'snowballs', name:'Snowball Toss',    img:buildingSVG('s','❄️','#5599cc'), desc:'Hit the targets with perfectly timed snowballs.',   reward:'8–30 🐟',  howto:'Click/tap the red targets before they disappear.'},
+  {id:'memory',    name:'Ice Memory',       img:buildingSVG('m','🧊','#88ccff'), desc:'Match pairs of arctic animals before time runs out.', reward:'15–50 🐟', howto:'Click cards to flip them — find all matching pairs!'},
+  {id:'trivia',    name:'Penguin Trivia',   img:IMG.emperor,                     desc:'Answer penguin facts for fishy rewards!',           reward:'5–20 🐟',  howto:'Pick the correct answer from 4 options. 5 questions per round.'},
+  {id:'identifier',name:'Penguin Identifier', img:IMG.adelie,                    desc:'Can you identify these real penguin species from their photo?', reward:'10–30 🐟', howto:'Look at the photo of a real penguin and choose which species it is!'},
 ];
 
-// ═══════════════════════════════════════════
-//  STATE & SAVE / LOAD
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════
+//  PENGUIN IDENTIFIER DATA (real photos)
+// ══════════════════════════════════════════
+const PENGUIN_ID_DATA = [
+  {name:'Emperor Penguin', img:PENGUIN_SVG.emperor,
+   opts:['Emperor Penguin','King Penguin','Gentoo Penguin','Adélie Penguin'],
+   fact:'Emperor penguins are the tallest and heaviest species. Males incubate eggs on their feet in -60°C blizzards for 2 months without eating! Look for the yellow-gold ear patches.'},
+  {name:'Adélie Penguin', img:PENGUIN_SVG.adelie,
+   opts:['Chinstrap Penguin','Rockhopper Penguin','Adélie Penguin','Little Penguin'],
+   fact:'Adélie penguins have a completely black head with distinctive white eye rings. They are highly feisty and will steal rocks from their neighbors\' nests!'},
+  {name:'Chinstrap Penguin', img:PENGUIN_SVG.chinstrap,
+   opts:['Adélie Penguin','Chinstrap Penguin','Macaroni Penguin','Gentoo Penguin'],
+   fact:'Chinstrap penguins are named for the thin black line under their chin — like a helmet strap! Over 8 million exist, making them one of the most common species.'},
+  {name:'Gentoo Penguin', img:PENGUIN_SVG.gentoo,
+   opts:['King Penguin','Gentoo Penguin','Emperor Penguin','African Penguin'],
+   fact:'Gentoo penguins have a distinctive white head stripe and a bright orange-red bill. They are the fastest swimming birds on Earth at up to 36 km/h!'},
+  {name:'Macaroni Penguin', img:PENGUIN_SVG.macaroni,
+   opts:['Rockhopper Penguin','Macaroni Penguin','King Penguin','Little Penguin'],
+   fact:'Macaroni penguins have vivid yellow-orange crests that flop sideways. Named after 18th-century men who wore extravagant feathered hats — "macaroni" fashion!'},
+  {name:'Rockhopper Penguin', img:PENGUIN_SVG.rockhopper,
+   opts:['Macaroni Penguin','Rockhopper Penguin','Chinstrap Penguin','African Penguin'],
+   fact:'Rockhoppers have spiky yellow-and-black eyebrow feathers and striking RED eyes! They hop between rocks rather than waddling — hence the name.'},
+  {name:'King Penguin', img:PENGUIN_SVG.king,
+   opts:['Emperor Penguin','King Penguin','Gentoo Penguin','Macaroni Penguin'],
+   fact:'King penguins are the second-largest species with vivid orange (not yellow) ear patches. Their fluffy brown chicks look so different people once thought they were a separate species!'},
+  {name:'Little Penguin', img:PENGUIN_SVG.little,
+   opts:['African Penguin','Little Penguin','Rockhopper Penguin','Adélie Penguin'],
+   fact:'Little penguins (Fairy penguins) are unique — they are BLUE, not black! At just 33cm tall they are the smallest penguin species. Found in Australia and New Zealand.'},
+  {name:'African Penguin', img:PENGUIN_SVG.african,
+   opts:['African Penguin','Chinstrap Penguin','Gentoo Penguin','Little Penguin'],
+   fact:'African penguins have a unique horseshoe-shaped black band and black spots on their belly. They also have pink patches above each eye! They sound like donkeys — earning them the nickname "jackass penguin."'},
+];
 
-const SAVE_KEY = 'penguin_isle_v2';
+const TRIVIA_Q = [
+  {q:'How many penguin species exist in the world?',a:'18',opts:['12','18','24','8']},
+  {q:'Which is the tallest penguin species?',a:'Emperor',opts:['King','Emperor','Gentoo','Macaroni']},
+  {q:'What do penguins use to swim?',a:'Flippers',opts:['Fins','Flippers','Tails','Feet']},
+  {q:'Penguins primarily live in which hemisphere?',a:'Southern',opts:['Northern','Southern','Both','Neither']},
+  {q:'What is a baby penguin called?',a:'Chick',opts:['Pup','Chick','Cub','Kit']},
+  {q:'Which penguin has a yellow crest?',a:'Macaroni',opts:['Rockhopper','Macaroni','Chinstrap','Adélie']},
+  {q:'Can penguins fly?',a:'No',opts:['Yes','No','Only at night','Only when young']},
+  {q:'What is the fastest swimming bird?',a:'Gentoo Penguin',opts:['Emperor Penguin','Gentoo Penguin','King Penguin','African Penguin']},
+  {q:'Where do Emperor penguins breed?',a:'Antarctica',opts:['Argentina','New Zealand','Antarctica','South Africa']},
+  {q:'What color are most penguin bellies?',a:'White',opts:['Blue','Brown','White','Yellow']},
+  {q:'Which penguin lives in Africa?',a:'African Penguin',opts:['Little Penguin','African Penguin','Galapagos Penguin','Rockhopper']},
+  {q:'How fast can Gentoo penguins swim?',a:'36 km/h',opts:['15 km/h','36 km/h','60 km/h','22 km/h']},
+];
 
-function defaultState() {
-  return {
-    fish: 50, stars: 0,
-    gridW: 10, gridH: 8,
-    cells: {},          // "col,row" -> buildingId
-    tracking: {},       // trackKey -> count
-    chapterClaimed: {}, // chapterId -> bool
-    ownedBuildings: ['penguin','igloo','fish','tree'],
-    selectedTool: 'penguin',
-  };
+// ══════════════════════════════════════════
+//  STATE & SAVE/LOAD
+// ══════════════════════════════════════════
+const SAVE_KEY='penguin_isle_v3';
+function defaultState(){
+  return {fish:60,stars:0,gridW:10,gridH:8,cells:{},tracking:{},chapterClaimed:{},
+    ownedBuildings:['penguin','igloo','fish','tree'],selectedTool:'penguin',
+    showWorldInstructions:true, seenOnboarding:false};
 }
-
-let S = defaultState();
-
-function save() {
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch(e) {}
+let S=defaultState();
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S));}catch(e){}}
+function load(){
+  try{const r=localStorage.getItem(SAVE_KEY);if(r)S=Object.assign(defaultState(),JSON.parse(r));}
+  catch(e){S=defaultState();}
 }
-function load() {
-  try {
-    const raw = localStorage.getItem(SAVE_KEY);
-    if (raw) { S = Object.assign(defaultState(), JSON.parse(raw)); }
-  } catch(e) { S = defaultState(); }
-}
+function track(key,val=1){S.tracking[key]=(S.tracking[key]||0)+val;}
+function getT(key){return S.tracking[key]||0;}
 
-function track(key, val=1) {
-  S.tracking[key] = (S.tracking[key]||0) + val;
-}
-function getTrack(key) { return S.tracking[key]||0; }
-
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════
 //  UI HELPERS
-// ═══════════════════════════════════════════
-
-function toast(msg, icon='🐧') {
-  const el = document.createElement('div');
-  el.className = 'toast';
-  el.innerHTML = `<span>${icon}</span> ${msg}`;
+// ══════════════════════════════════════════
+function toast(msg,imgSrc){
+  const el=document.createElement('div');
+  el.className='toast';
+  el.innerHTML=imgSrc?`<img src="${imgSrc}" onerror="this.style.display='none'">${msg}`:msg;
   document.getElementById('toast-container').appendChild(el);
-  setTimeout(() => el.remove(), 3200);
+  setTimeout(()=>el.remove(),3200);
 }
 
-function switchTab(tab) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+function switchTab(tab,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(tab+'-view').classList.add('active');
-  event.target.classList.add('active');
-  if (tab === 'story')    renderStory();
-  if (tab === 'shop')     renderShop();
-  if (tab === 'minigames') renderMinigameList();
+  if(btn)btn.classList.add('active');
+  if(tab==='story')renderStory();
+  if(tab==='shop')renderShop();
+  if(tab==='minigames')renderMinigameList();
 }
 
-function updateStats() {
-  let pop = 0;
-  Object.values(S.cells).forEach(id => {
-    const b = BUILDINGS.find(x=>x.id===id);
-    if (b) pop += b.pop;
-  });
-  S.tracking['population'] = pop;
-  document.getElementById('fish-count').textContent = S.fish;
-  document.getElementById('star-count').textContent = S.stars;
-  document.getElementById('pop-count').textContent = pop;
-  document.getElementById('expand-btn').textContent = `🧊 Expand World (${expandCost()} 🐟)`;
+function toggleInstructions(){
+  const box=document.getElementById('world-instructions');
+  const vis=box.style.display!=='none';
+  box.style.display=vis?'none':'block';
+  S.showWorldInstructions=!vis;save();
+}
+
+function showHelp(){
+  openModal('Help & Instructions',`
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="instructions-box" style="margin:0">
+        <h3>🌍 World Builder</h3>
+        <ul>
+          <li>Select a building from the toolbar → click a tile to place it.</li>
+          <li>Use 🗑️ Erase tool to remove a placed building.</li>
+          <li>Click <b>Expand World</b> to grow your grid (costs Fish).</li>
+        </ul>
+      </div>
+      <div class="instructions-box" style="margin:0">
+        <h3>📖 Story Mode</h3>
+        <ul>
+          <li>Complete chapter tasks (build things, grow population) to claim rewards.</li>
+          <li>Rewards include Fish, Stars, and unlocking new buildings.</li>
+        </ul>
+      </div>
+      <div class="instructions-box" style="margin:0">
+        <h3>🎮 Mini-games</h3>
+        <ul>
+          <li><b>Fish Catch</b> — click fish as they swim across the screen.</li>
+          <li><b>Ice Slide</b> — use ← → keys or buttons to dodge rocks.</li>
+          <li><b>Snowball Toss</b> — click the red targets before they fade.</li>
+          <li><b>Ice Memory</b> — flip and match all animal pairs.</li>
+          <li><b>Penguin Trivia</b> — pick the right answer from 4 choices.</li>
+          <li><b>Penguin Identifier</b> — name the species from a real photo!</li>
+        </ul>
+      </div>
+      <div class="instructions-box" style="margin:0">
+        <h3>💾 Saving</h3>
+        <ul><li>Your progress auto-saves every time you make a change. It persists even after closing the tab!</li></ul>
+      </div>
+    </div>
+  `);
+}
+
+function updateStats(){
+  let pop=0;
+  Object.values(S.cells).forEach(id=>{const b=BUILDINGS.find(x=>x.id===id);if(b)pop+=b.pop;});
+  S.tracking['population']=pop;
+  document.getElementById('fish-count').textContent=S.fish;
+  document.getElementById('star-count').textContent=S.stars;
+  document.getElementById('pop-count').textContent=pop;
+  document.getElementById('expand-btn').textContent=`🧊 Expand (${expandCost()} 🐟)`;
   save();
 }
+function expandCost(){return Math.round(50*Math.pow(1.4,((S.gridW/5)+(S.gridH/4)-4)));}
 
-function expandCost() { return Math.round(50 * Math.pow(1.4, ((S.gridW/5)+(S.gridH/4)-4))); }
-
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════
 //  WORLD GRID
-// ═══════════════════════════════════════════
-
-function renderGrid() {
-  const grid = document.getElementById('world-grid');
-  grid.style.gridTemplateColumns = `repeat(${S.gridW}, 52px)`;
-  grid.style.gridTemplateRows    = `repeat(${S.gridH}, 52px)`;
-  grid.innerHTML = '';
-  for (let r=0; r<S.gridH; r++) {
-    for (let c=0; c<S.gridW; c++) {
-      const key = `${c},${r}`;
-      const div = document.createElement('div');
-      div.className = 'cell';
-      div.dataset.key = key;
-      const placed = S.cells[key];
-      if (placed) {
-        const b = BUILDINGS.find(x=>x.id===placed);
-        div.textContent = b ? b.emoji : '';
+// ══════════════════════════════════════════
+function renderGrid(){
+  const grid=document.getElementById('world-grid');
+  grid.style.gridTemplateColumns=`repeat(${S.gridW},60px)`;
+  grid.style.gridTemplateRows=`repeat(${S.gridH},60px)`;
+  grid.innerHTML='';
+  for(let r=0;r<S.gridH;r++){
+    for(let c=0;c<S.gridW;c++){
+      const key=`${c},${r}`;
+      const div=document.createElement('div');
+      div.className='cell';
+      const placed=S.cells[key];
+      if(placed){
+        const b=BUILDINGS.find(x=>x.id===placed);
+        if(b){
+          const img=document.createElement('img');
+          img.src=BUILDING_IMGS[placed]||buildingSVG(placed,b.emoji);
+          img.alt=b.name;
+          img.onerror=function(){this.src=buildingSVG(placed,b.emoji);};
+          div.appendChild(img);
+          const lbl=document.createElement('div');
+          lbl.className='cell-label';
+          lbl.textContent=b.name;
+          div.appendChild(lbl);
+        }
       }
-      div.addEventListener('click', () => handleCellClick(key, div));
+      div.addEventListener('click',()=>handleCellClick(key,div));
       grid.appendChild(div);
     }
   }
 }
 
-function handleCellClick(key, div) {
-  if (S.selectedTool === 'erase') {
-    if (S.cells[key]) {
-      const id = S.cells[key];
-      const tkey = id+'_placed';
-      S.tracking[tkey] = Math.max(0,(S.tracking[tkey]||0)-1);
+function handleCellClick(key,div){
+  if(S.selectedTool==='erase'){
+    if(S.cells[key]){
+      const id=S.cells[key];
+      S.tracking[id+'_placed']=Math.max(0,(S.tracking[id+'_placed']||0)-1);
       delete S.cells[key];
-      div.textContent = '';
-      updateStats();
-      checkStoryProgress();
+      div.innerHTML='';
+      updateStats();checkStoryProgress();
     }
     return;
   }
-  const tool = S.selectedTool;
-  if (!tool) return;
-  const b = BUILDINGS.find(x=>x.id===tool);
-  if (!b) return;
-  // Cost on first place? No — building is owned. Free placement from shop.
-  if (!S.ownedBuildings.includes(b.id)) {
-    toast(`Buy ${b.name} in the Shop first! (${b.cost} 🐟)`, '🛒');
-    return;
-  }
-  if (S.cells[key]) {
-    toast('That spot is taken! Erase first.', '⚠️');
-    return;
-  }
-  S.cells[key] = tool;
-  const tkey = tool+'_placed';
-  track(tkey);
-  div.textContent = b.emoji;
-  // Special track for penguins
-  if (tool==='penguin') track('penguins_placed',0); // already tracked above
-  updateStats();
-  checkStoryProgress();
+  const b=BUILDINGS.find(x=>x.id===S.selectedTool);
+  if(!b)return;
+  if(!S.ownedBuildings.includes(b.id)){toast(`Buy ${b.name} in the Shop first! (${b.cost} 🐟)`);return;}
+  if(S.cells[key]){toast('That spot is taken! Use Erase first.');return;}
+  S.cells[key]=b.id;
+  track(b.id+'_placed');
+  const img=document.createElement('img');
+  img.src=BUILDING_IMGS[b.id]||buildingSVG(b.id,b.emoji);
+  img.alt=b.name;
+  img.onerror=function(){this.src=buildingSVG(b.id,b.emoji);};
+  div.innerHTML='';
+  div.appendChild(img);
+  const lbl=document.createElement('div');lbl.className='cell-label';lbl.textContent=b.name;
+  div.appendChild(lbl);
+  updateStats();checkStoryProgress();
+  toast(`Placed ${b.name}!`,BUILDING_IMGS[b.id]);
 }
 
-function selectTool(id) {
-  S.selectedTool = id;
-  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-  if (id==='erase') {
-    document.getElementById('erase-btn').classList.add('active');
-  } else {
-    const btn = document.querySelector(`.tool-btn[data-id="${id}"]`);
-    if (btn) btn.classList.add('active');
-  }
+function selectTool(id){
+  S.selectedTool=id;
+  document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
+  if(id==='erase'){document.getElementById('erase-btn').classList.add('active');}
+  else{const btn=document.querySelector(`.tool-btn[data-id="${id}"]`);if(btn)btn.classList.add('active');}
   save();
 }
 
-function buildToolbar() {
-  const container = document.getElementById('toolbar-items');
-  container.innerHTML = '';
-  BUILDINGS.filter(b => S.ownedBuildings.includes(b.id)).forEach(b => {
-    const btn = document.createElement('button');
-    btn.className = 'tool-btn' + (S.selectedTool===b.id?' active':'');
-    btn.dataset.id = b.id;
-    btn.innerHTML = `${b.emoji} <span>${b.name}</span>`;
-    btn.title = b.name;
-    btn.onclick = () => selectTool(b.id);
-    container.appendChild(btn);
+function buildToolbar(){
+  const c=document.getElementById('toolbar-items');c.innerHTML='';
+  BUILDINGS.filter(b=>S.ownedBuildings.includes(b.id)).forEach(b=>{
+    const btn=document.createElement('button');
+    btn.className='tool-btn'+(S.selectedTool===b.id?' active':'');
+    btn.dataset.id=b.id;
+    btn.title=b.name;
+    const img=document.createElement('img');
+    img.src=BUILDING_IMGS[b.id]||buildingSVG(b.id,b.emoji);
+    img.alt=b.name;
+    img.onerror=function(){this.src=buildingSVG(b.id,b.emoji);};
+    const lbl=document.createElement('span');lbl.textContent=b.name;
+    btn.appendChild(img);btn.appendChild(lbl);
+    btn.onclick=()=>selectTool(b.id);
+    c.appendChild(btn);
   });
 }
 
-function tryExpand() {
-  const cost = expandCost();
-  if (S.fish < cost) { toast(`Need ${cost} 🐟 to expand! Play mini-games to earn more.`, '🧊'); return; }
-  S.fish -= cost;
-  // Expand right or down alternately
-  if (S.gridW <= S.gridH + 2) S.gridW = Math.min(20, S.gridW+2);
-  else S.gridH = Math.min(16, S.gridH+2);
-  toast(`World expanded! New size: ${S.gridW}×${S.gridH} 🧊`, '🌍');
-  renderGrid();
-  updateStats();
+function tryExpand(){
+  const cost=expandCost();
+  if(S.fish<cost){toast(`Need ${cost} 🐟 to expand! Play mini-games to earn more.`);return;}
+  S.fish-=cost;
+  if(S.gridW<=S.gridH+2)S.gridW=Math.min(20,S.gridW+2);
+  else S.gridH=Math.min(16,S.gridH+2);
+  toast(`World expanded to ${S.gridW}×${S.gridH}! 🧊`);
+  renderGrid();updateStats();
 }
 
-// ═══════════════════════════════════════════
-//  STORY / CHAPTERS
-// ═══════════════════════════════════════════
-
-function checkStoryProgress() {
-  // Unlock chapters based on previous completions
-  CHAPTERS.forEach((ch, i) => {
-    if (i === 0) return;
-    const prev = CHAPTERS[i-1];
-    if (isChapterComplete(prev)) ch.unlocked = true;
-  });
-  // Re-render if on story tab
-  if (document.getElementById('story-view').classList.contains('active')) renderStory();
-}
-
-function isChapterComplete(ch) {
-  return ch.tasks.every(t => {
-    const val = t.trackKey === 'population' ? (S.tracking['population']||0) : (S.tracking[t.trackKey]||0);
-    return val >= t.target;
+// ══════════════════════════════════════════
+//  STORY
+// ══════════════════════════════════════════
+function isChapComplete(ch){
+  return ch.tasks.every(t=>{
+    const val=t.trackKey==='population'?getT('population'):getT(t.trackKey);
+    return val>=t.target;
   });
 }
-
-function renderStory() {
-  const container = document.getElementById('chapters-container');
-  container.innerHTML = '';
-
-  // Sync chapter unlock from state
-  CHAPTERS.forEach((ch, i) => {
-    if (i === 0) ch.unlocked = true;
-    else if (isChapterComplete(CHAPTERS[i-1])) ch.unlocked = true;
-  });
-
-  CHAPTERS.forEach(ch => {
-    const complete = isChapterComplete(ch);
-    const claimed = S.chapterClaimed[ch.id];
-
-    const div = document.createElement('div');
-    div.className = 'story-chapter' + (ch.unlocked?'':' locked');
-
-    let tasksHTML = ch.tasks.map(t => {
-      const val = Math.min(t.trackKey==='population'?(S.tracking['population']||0):(S.tracking[t.trackKey]||0), t.target);
-      const pct = Math.round(val/t.target*100);
-      const done = val >= t.target;
-      return `<div class="task-row ${done?'done':''}">
-        <span class="check">${done?'✅':'⬜'}</span>
+function checkStoryProgress(){
+  CHAPTERS.forEach((ch,i)=>{if(i>0&&isChapComplete(CHAPTERS[i-1]))ch.unlocked=true;});
+  if(document.getElementById('story-view').classList.contains('active'))renderStory();
+}
+function renderStory(){
+  CHAPTERS.forEach((ch,i)=>{if(i===0)ch.unlocked=true;else if(isChapComplete(CHAPTERS[i-1]))ch.unlocked=true;});
+  const c=document.getElementById('chapters-container');c.innerHTML='';
+  CHAPTERS.forEach(ch=>{
+    const complete=isChapComplete(ch),claimed=S.chapterClaimed[ch.id];
+    const div=document.createElement('div');
+    div.className='story-chapter'+(ch.unlocked?'':' locked');
+    const tasks=ch.tasks.map(t=>{
+      const val=Math.min(t.trackKey==='population'?getT('population'):getT(t.trackKey),t.target);
+      const pct=Math.round(val/t.target*100);
+      return `<div class="task-row ${val>=t.target?'done':''}">
+        <span>${val>=t.target?'✅':'⬜'}</span>
         <span style="flex:1">${t.label}</span>
-        <span style="font-size:12px;color:rgba(255,255,255,.5);margin-right:8px">${val}/${t.target}</span>
+        <span style="font-size:11px;color:rgba(255,255,255,.45);margin-right:8px">${val}/${t.target}</span>
         <div class="task-progress" style="width:80px"><div class="task-progress-fill" style="width:${pct}%"></div></div>
       </div>`;
     }).join('');
-
-    let actionHTML = claimed
-      ? `<div class="claimed-badge">✅ Claimed!</div>`
-      : `<button class="claim-btn" onclick="claimChapter('${ch.id}')" ${complete?'':'disabled'}>
-          ${complete?'🎁 Claim Reward':'Complete tasks to claim'}
-         </button>`;
-
-    div.innerHTML = `
+    const action=claimed?`<div class="claimed-badge">✅ Reward Claimed!</div>`
+      :`<button class="claim-btn" onclick="claimChapter('${ch.id}')" ${complete?'':'disabled'}>${complete?'🎁 Claim Reward':'Complete tasks to claim'}</button>`;
+    div.innerHTML=`
       <div class="chapter-header">
-        <div class="chapter-icon">${ch.icon}</div>
+        <img class="chapter-icon-img" src="${ch.icon}" alt="${ch.title}" onerror="this.style.display='none'">
         <div>
-          <div class="chapter-title">${ch.unlocked?ch.title:'??? Locked ???'}</div>
+          <div class="chapter-title">${ch.unlocked?ch.title:'🔒 Locked'}</div>
           <div class="chapter-sub">Reward: ${ch.rewardText}</div>
         </div>
       </div>
-      ${ch.unlocked ? `<div class="chapter-body">${ch.story}</div>` : '<div class="chapter-body">Complete the previous chapter to unlock this one!</div>'}
-      ${ch.unlocked ? `<div class="chapter-tasks">${tasksHTML}</div>${actionHTML}` : ''}
-    `;
-    container.appendChild(div);
+      ${ch.unlocked?`<div class="chapter-body">${ch.story}</div><div class="chapter-tasks">${tasks}</div>${action}`
+        :'<div class="chapter-body" style="font-size:12px">Complete the previous chapter to unlock.</div>'}`;
+    c.appendChild(div);
   });
 }
-
-function claimChapter(id) {
-  const ch = CHAPTERS.find(c=>c.id===id);
-  if (!ch || S.chapterClaimed[id] || !isChapterComplete(ch)) return;
-  S.chapterClaimed[id] = true;
-  S.fish  += ch.reward.fish;
-  S.stars += ch.reward.stars;
-  ch.reward.unlocks.forEach(uid => {
-    if (!S.ownedBuildings.includes(uid)) S.ownedBuildings.push(uid);
-    const b = BUILDINGS.find(x=>x.id===uid);
-    if (b) b.unlocked = true;
-  });
-  toast(`Chapter "${ch.title}" complete! +${ch.reward.fish} 🐟 +${ch.reward.stars} ⭐`, '🎉');
-  updateStats();
-  buildToolbar();
-  renderStory();
-  checkStoryProgress();
+function claimChapter(id){
+  const ch=CHAPTERS.find(c=>c.id===id);
+  if(!ch||S.chapterClaimed[id]||!isChapComplete(ch))return;
+  S.chapterClaimed[id]=true;
+  S.fish+=ch.reward.fish;S.stars+=ch.reward.stars;
+  ch.reward.unlocks.forEach(uid=>{if(!S.ownedBuildings.includes(uid))S.ownedBuildings.push(uid);});
+  toast(`Chapter complete! +${ch.reward.fish} 🐟 +${ch.reward.stars} ⭐`,ch.icon);
+  updateStats();buildToolbar();renderStory();checkStoryProgress();
 }
 
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════
 //  SHOP
-// ═══════════════════════════════════════════
-
-function renderShop() {
-  const el = document.getElementById('shop-content');
-  const cats = [...new Set(BUILDINGS.map(b=>b.cat))];
-  el.innerHTML = cats.map(cat => {
-    const items = BUILDINGS.filter(b=>b.cat===cat);
+// ══════════════════════════════════════════
+function renderShop(){
+  const el=document.getElementById('shop-content');
+  const cats=[...new Set(BUILDINGS.map(b=>b.cat))];
+  el.innerHTML=cats.map(cat=>{
+    const items=BUILDINGS.filter(b=>b.cat===cat);
+    const catLabel={penguins:'🐧 Penguins',homes:'🏠 Homes',nature:'🌲 Nature',deco:'✨ Decorations',business:'🏪 Businesses'}[cat]||cat;
     return `<div style="margin-bottom:24px">
-      <div class="section-title">${catLabel(cat)}</div>
+      <div class="section-title">${catLabel}</div>
       <div class="shop-grid">
         ${items.map(b=>{
-          const owned = S.ownedBuildings.includes(b.id);
+          const owned=S.ownedBuildings.includes(b.id);
           return `<div class="shop-item ${owned?'owned':''}" onclick="buyBuilding('${b.id}')">
-            <div class="si-emoji">${b.emoji}</div>
+            <img src="${BUILDING_IMGS[b.id]||buildingSVG(b.id,b.emoji)}" alt="${b.name}" onerror="this.src='${buildingSVG(b.id,b.emoji)}'">
             <div class="si-name">${b.name}</div>
             <div class="si-price">${owned?'✅ Owned':'🐟 '+b.cost}</div>
-            ${b.pop?`<div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:3px">+${b.pop} 🐧 pop</div>`:''}
+            ${b.pop?`<div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:2px">+${b.pop} pop</div>`:''}
           </div>`;
         }).join('')}
       </div>
     </div>`;
   }).join('');
 }
-
-function catLabel(c) {
-  return {penguins:'🐧 Penguins', homes:'🏠 Homes', nature:'🌲 Nature', deco:'✨ Decorations', business:'🏪 Businesses'}[c]||c;
+function buyBuilding(id){
+  const b=BUILDINGS.find(x=>x.id===id);if(!b)return;
+  if(S.ownedBuildings.includes(id)){toast(`Already own ${b.name}!`);return;}
+  if(S.fish<b.cost){toast(`Need ${b.cost} 🐟 for ${b.name}. Play mini-games to earn more!`);return;}
+  S.fish-=b.cost;S.ownedBuildings.push(id);
+  toast(`Unlocked ${b.name}!`,BUILDING_IMGS[id]);
+  updateStats();buildToolbar();renderShop();
 }
 
-function buyBuilding(id) {
-  const b = BUILDINGS.find(x=>x.id===id);
-  if (!b) return;
-  if (S.ownedBuildings.includes(id)) { toast(`You already own ${b.name}!`, '✅'); return; }
-  if (S.fish < b.cost) { toast(`Need ${b.cost} 🐟 for ${b.name}. Earn more in mini-games!`, '💸'); return; }
-  S.fish -= b.cost;
-  S.ownedBuildings.push(id);
-  toast(`Unlocked ${b.emoji} ${b.name}!`, '🛒');
-  updateStats();
-  buildToolbar();
-  renderShop();
-}
-
-// ═══════════════════════════════════════════
-//  MINI-GAMES LIST
-// ═══════════════════════════════════════════
-
-function renderMinigameList() {
-  const el = document.getElementById('minigame-list');
-  el.innerHTML = MINIGAMES.map(mg => `
+// ══════════════════════════════════════════
+//  MINIGAMES LIST
+// ══════════════════════════════════════════
+function renderMinigameList(){
+  const el=document.getElementById('minigame-list');
+  el.innerHTML=MINIGAMES.map(mg=>`
     <div class="minigame-card" onclick="openMinigame('${mg.id}')">
-      <div class="mg-icon">${mg.icon}</div>
+      <img class="mg-img" src="${mg.img}" alt="${mg.name}" onerror="this.src='${buildingSVG(mg.id,'🎮')}'">
       <div class="mg-name">${mg.name}</div>
       <div class="mg-desc">${mg.desc}</div>
+      <div class="mg-howto">🕹️ ${mg.howto}</div>
       <div class="mg-reward">${mg.reward}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-function openMinigame(id) {
-  const mg = MINIGAMES.find(m=>m.id===id);
-  if (!mg) return;
-  document.getElementById('modal-title').textContent = mg.icon+' '+mg.name;
-  document.getElementById('modal-body').innerHTML = '<div id="mg-container"></div>';
+// ══════════════════════════════════════════
+//  MODAL
+// ══════════════════════════════════════════
+function openModal(title,bodyHTML,imgSrc){
+  const t=document.getElementById('modal-title');
+  t.innerHTML=imgSrc?`<img src="${imgSrc}" onerror="this.style.display='none'">${title}`:title;
+  document.getElementById('modal-body').innerHTML=bodyHTML;
   document.getElementById('modal-overlay').classList.add('open');
-  setTimeout(() => {
-    const c = document.getElementById('mg-container');
-    if (id==='fishcatch') buildFishCatch(c);
-    else if (id==='iceslide') buildIceSlide(c);
-    else if (id==='snowballs') buildSnowballs(c);
-    else if (id==='memory') buildMemory(c);
-    else if (id==='trivia') buildTrivia(c);
-  }, 50);
+}
+function closeModal(){
+  stopAllGames();
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.getElementById('modal-body').innerHTML='';
+}
+function closeModalOutside(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
+
+function openMinigame(id){
+  const mg=MINIGAMES.find(m=>m.id===id);if(!mg)return;
+  openModal(mg.name,'<div id="mg-container"></div>',mg.img);
+  setTimeout(()=>{
+    const c=document.getElementById('mg-container');
+    if(id==='fishcatch')buildFishCatch(c);
+    else if(id==='iceslide')buildIceSlide(c);
+    else if(id==='snowballs')buildSnowballs(c);
+    else if(id==='memory')buildMemory(c);
+    else if(id==='trivia')buildTrivia(c);
+    else if(id==='identifier')buildIdentifier(c);
+  },50);
 }
 
-function closeModal(e) {
-  if (e && e.target !== document.getElementById('modal-overlay') && e.target !== document.getElementById('modal-close') && !e.target.classList.contains('mg-btn')) return;
-  if (e && e.target === document.getElementById('modal-box')) return;
-  if (!e || e.target === document.getElementById('modal-overlay') || e.target.id==='modal-close') {
-    stopAllGames();
-    document.getElementById('modal-overlay').classList.remove('open');
-    document.getElementById('modal-body').innerHTML = '';
-  }
+let gameLoops=[];
+function stopAllGames(){gameLoops.forEach(id=>clearInterval(id));gameLoops=[];}
+function giveReward(fish,msg){
+  S.fish+=fish;toast(`+${fish} 🐟 ${msg}`);updateStats();
 }
 
-let gameLoops = [];
-function stopAllGames() { gameLoops.forEach(id=>clearInterval(id)); gameLoops=[]; }
-
-function giveReward(fish, msg) {
-  S.fish += fish;
-  toast(`+${fish} 🐟 earned! ${msg}`, '🎣');
-  updateStats();
-}
-
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════
 //  MINI-GAME 1: FISH CATCH
-// ═══════════════════════════════════════════
-
-function buildFishCatch(container) {
-  container.innerHTML = `
-    <div class="mg-msg" id="fc-msg">Tap the fish before they swim away!</div>
+// ══════════════════════════════════════════
+function buildFishCatch(c){
+  c.innerHTML=`
+    <div class="mg-msg" id="fc-msg">Click the fish before they swim away!</div>
     <div class="mg-score" id="fc-score">🐟 0</div>
-    <canvas id="fc-canvas" width="420" height="300" style="background:#0d2b4a;border-radius:12px;cursor:crosshair"></canvas>
+    <canvas id="fc-canvas" width="420" height="280" style="background:linear-gradient(180deg,#0d2b4a,#0a4060);cursor:crosshair"></canvas>
     <div class="mg-controls">
       <button class="mg-btn" id="fc-start" onclick="startFishCatch()">▶ Start</button>
-      <button class="mg-btn secondary" onclick="closeModal({target:document.getElementById('modal-overlay')})">✕ Close</button>
+      <button class="mg-btn secondary" onclick="closeModal()">✕ Close</button>
     </div>`;
 }
-
-function startFishCatch() {
+function startFishCatch(){
   stopAllGames();
-  const canvas = document.getElementById('fc-canvas');
-  const ctx = canvas.getContext('2d');
-  let score=0, timeLeft=20, fish=[];
+  const cv=document.getElementById('fc-canvas'),ctx=cv.getContext('2d');
+  let score=0,timeLeft=20,fish=[];
   document.getElementById('fc-score').textContent='🐟 0';
   document.getElementById('fc-msg').textContent='Tap the fish!';
   document.getElementById('fc-start').disabled=true;
-
-  function spawnFish() {
-    fish.push({x:-30, y:20+Math.random()*260, vx:1.5+Math.random()*2.5, size:18+Math.random()*14, emoji:'🐟'});
+  const sp=setInterval(()=>fish.push({x:-30,y:20+Math.random()*240,vx:1.5+Math.random()*2.5,size:22+Math.random()*12}),700);
+  gameLoops.push(sp);
+  function draw(){
+    ctx.clearRect(0,0,420,280);
+    for(let i=0;i<6;i++){ctx.fillStyle=`rgba(30,80,160,${0.08+i*0.02})`;ctx.fillRect(0,46*i,420,23);}
+    fish.forEach(f=>{ctx.font=`${f.size*2}px serif`;ctx.fillText('🐟',f.x,f.y);});
+    ctx.fillStyle='rgba(255,255,255,.08)';ctx.fillRect(10,268,400,7);
+    ctx.fillStyle='#00b8a9';ctx.fillRect(10,268,400*(timeLeft/20),7);
   }
-
-  function draw() {
-    ctx.clearRect(0,0,420,300);
-    // Water ripples
-    ctx.fillStyle='rgba(30,80,140,0.3)';
-    for(let i=0;i<5;i++){ctx.fillRect(0,60*i,420,30);}
-    // Fish
-    fish.forEach(f=>{
-      ctx.font=`${f.size*2}px serif`;
-      ctx.fillText(f.emoji,f.x,f.y);
-    });
-    // Timer bar
-    ctx.fillStyle='rgba(255,255,255,0.1)';ctx.fillRect(10,280,400,8);ctx.borderRadius=4;
-    ctx.fillStyle='#00b8a9';ctx.fillRect(10,280,400*(timeLeft/20),8);
-  }
-
-  canvas.onclick = function(e) {
-    const r=canvas.getBoundingClientRect();
-    const mx=(e.clientX-r.left)*(420/r.width), my=(e.clientY-r.top)*(300/r.height);
-    fish = fish.filter(f=>{
-      const hit = mx>f.x-5 && mx<f.x+f.size*2+10 && my>f.y-f.size*2 && my<f.y+10;
+  cv.onclick=e=>{
+    const r=cv.getBoundingClientRect(),mx=(e.clientX-r.left)*(420/r.width),my=(e.clientY-r.top)*(280/r.height);
+    fish=fish.filter(f=>{
+      const hit=mx>f.x-5&&mx<f.x+f.size*2+10&&my>f.y-f.size*2&&my<f.y+10;
       if(hit){score++;document.getElementById('fc-score').textContent='🐟 '+score;}
       return !hit;
     });
   };
-
-  const spawn = setInterval(spawnFish,800); gameLoops.push(spawn);
-  const loop = setInterval(()=>{
-    fish.forEach(f=>f.x+=f.vx);
-    fish=fish.filter(f=>f.x<450);
-    draw();
-  },33); gameLoops.push(loop);
-
-  const timer = setInterval(()=>{
+  const loop=setInterval(()=>{fish.forEach(f=>f.x+=f.vx);fish=fish.filter(f=>f.x<460);draw();},33);
+  gameLoops.push(loop);
+  const timer=setInterval(()=>{
     timeLeft--;
     if(timeLeft<=0){
-      clearInterval(timer); clearInterval(loop); clearInterval(spawn);
-      gameLoops=[];
-      const reward=score*2+5;
-      document.getElementById('fc-msg').textContent=`Game over! You caught ${score} fish!`;
+      clearInterval(timer);clearInterval(loop);clearInterval(sp);gameLoops=[];
+      document.getElementById('fc-msg').textContent=`Game over! Caught ${score} fish!`;
       document.getElementById('fc-start').textContent='▶ Play Again';
       document.getElementById('fc-start').disabled=false;
       document.getElementById('fc-start').onclick=startFishCatch;
-      giveReward(reward,`Fish Catch: ${score} fish!`);
+      giveReward(score*2+5,`Fish Catch: ${score} fish!`);
     }
-  },1000); gameLoops.push(timer);
+  },1000);gameLoops.push(timer);
 }
 
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════
 //  MINI-GAME 2: ICE SLIDE
-// ═══════════════════════════════════════════
-
-function buildIceSlide(container) {
-  container.innerHTML = `
-    <div class="mg-msg" id="is-msg">Press ← → or A/D to dodge the rocks!</div>
+// ══════════════════════════════════════════
+function buildIceSlide(c){
+  c.innerHTML=`
+    <div class="mg-msg" id="is-msg">Use ← → keys or buttons to dodge rocks!</div>
     <div class="mg-score" id="is-score">🛷 0m</div>
-    <canvas id="is-canvas" width="320" height="380" style="background:#1a3d6b;border-radius:12px"></canvas>
+    <canvas id="is-canvas" width="300" height="360" style="background:linear-gradient(180deg,#0d2040,#1a4870)"></canvas>
     <div class="mg-controls">
-      <button class="mg-btn" id="is-left" ontouchstart="isKeys.left=true" ontouchend="isKeys.left=false">◀</button>
+      <button class="mg-btn" id="is-left" onmousedown="isK.l=true" onmouseup="isK.l=false" ontouchstart="isK.l=true;event.preventDefault()" ontouchend="isK.l=false">◀ Left</button>
       <button class="mg-btn" id="is-start" onclick="startIceSlide()">▶ Start</button>
-      <button class="mg-btn" id="is-right" ontouchstart="isKeys.right=true" ontouchend="isKeys.right=false">▶</button>
-      <button class="mg-btn secondary" onclick="closeModal({target:document.getElementById('modal-overlay')})">✕ Close</button>
+      <button class="mg-btn" id="is-right" onmousedown="isK.r=true" onmouseup="isK.r=false" ontouchstart="isK.r=true;event.preventDefault()" ontouchend="isK.r=false">Right ▶</button>
+      <button class="mg-btn secondary" onclick="closeModal()">✕ Close</button>
     </div>`;
 }
-
-const isKeys={left:false,right:false};
-document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='a')isKeys.left=true;if(e.key==='ArrowRight'||e.key==='d')isKeys.right=true;});
-document.addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a')isKeys.left=false;if(e.key==='ArrowRight'||e.key==='d')isKeys.right=false;});
-
-function startIceSlide() {
+const isK={l:false,r:false};
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='a')isK.l=true;if(e.key==='ArrowRight'||e.key==='d')isK.r=true;});
+document.addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a')isK.l=false;if(e.key==='ArrowRight'||e.key==='d')isK.r=false;});
+function startIceSlide(){
   stopAllGames();
-  const canvas=document.getElementById('is-canvas');
-  const ctx=canvas.getContext('2d');
-  let px=150,py=320,dist=0,speed=2,rocks=[],alive=true;
+  const cv=document.getElementById('is-canvas'),ctx=cv.getContext('2d');
+  let px=135,dist=0,spd=2,rocks=[],alive=true;
   document.getElementById('is-start').disabled=true;
-  document.getElementById('is-score').textContent='🛷 0m';
-  document.getElementById('is-msg').textContent='Dodge the rocks!';
-
-  function spawnRock(){rocks.push({x:20+Math.random()*280,y:-30,r:12+Math.random()*10});}
-  const sp=setInterval(spawnRock,900);gameLoops.push(sp);
-
+  const sp=setInterval(()=>rocks.push({x:15+Math.random()*270,y:-30,r:11+Math.random()*9}),850);gameLoops.push(sp);
   const loop=setInterval(()=>{
     if(!alive)return;
-    if(isKeys.left&&px>20)px-=4;
-    if(isKeys.right&&px<300)px+=4;
-    rocks.forEach(r=>r.y+=speed);
-    rocks=rocks.filter(r=>r.y<400);
-    dist+=speed*0.05; speed=2+dist*0.05;
-    // Collision
-    rocks.forEach(r=>{
-      if(Math.hypot(px-r.x,py-r.y)<r.r+14){alive=false;}
-    });
-    // Draw
-    ctx.clearRect(0,0,320,380);
-    // Snow stripes
-    ctx.fillStyle='rgba(180,220,255,0.06)';
-    for(let i=0;i<8;i++){ctx.fillRect(i*40,0,20,380);}
-    // Rocks
-    rocks.forEach(r=>{ctx.fillStyle='#445';ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,Math.PI*2);ctx.fill();});
-    // Penguin
-    ctx.font='28px serif';ctx.fillText('🐧',px-14,py+10);
+    if(isK.l&&px>18)px-=4;if(isK.r&&px<282)px+=4;
+    rocks.forEach(r=>r.y+=spd);rocks=rocks.filter(r=>r.y<380);
+    dist+=spd*0.05;spd=2+dist*0.06;
+    rocks.forEach(r=>{if(Math.hypot(px-r.x,(300-18)-r.y)<r.r+13)alive=false;});
+    ctx.clearRect(0,0,300,360);
+    for(let i=0;i<6;i++){ctx.fillStyle='rgba(150,200,255,0.04)';ctx.fillRect(i*50,0,25,360);}
+    rocks.forEach(r=>{ctx.fillStyle='#334455';ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,Math.PI*2);ctx.fill();ctx.fillStyle='#556677';ctx.beginPath();ctx.arc(r.x-3,r.y-3,r.r*0.4,0,Math.PI*2);ctx.fill();});
+    ctx.font='28px serif';ctx.fillText('🐧',px-14,300);
     document.getElementById('is-score').textContent='🛷 '+Math.floor(dist)+'m';
     if(!alive){
       clearInterval(loop);clearInterval(sp);gameLoops=[];
-      ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(0,140,320,80);
-      ctx.fillStyle='white';ctx.font='bold 20px Nunito';ctx.textAlign='center';
-      ctx.fillText(`Crashed at ${Math.floor(dist)}m!`,160,180);ctx.textAlign='start';
-      document.getElementById('is-msg').textContent='Game over!';
+      ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(0,130,300,80);
+      ctx.fillStyle='white';ctx.font='bold 18px Nunito';ctx.textAlign='center';
+      ctx.fillText('Crashed at '+Math.floor(dist)+'m!',150,175);ctx.textAlign='start';
+      document.getElementById('is-msg').textContent='Better luck next time!';
       document.getElementById('is-start').textContent='▶ Try Again';
       document.getElementById('is-start').disabled=false;
       document.getElementById('is-start').onclick=startIceSlide;
@@ -951,139 +1177,104 @@ function startIceSlide() {
   },33);gameLoops.push(loop);
 }
 
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════
 //  MINI-GAME 3: SNOWBALL TOSS
-// ═══════════════════════════════════════════
-
-function buildSnowballs(container) {
-  container.innerHTML = `
-    <div class="mg-msg" id="sb-msg">Click the targets to hit them with snowballs!</div>
+// ══════════════════════════════════════════
+function buildSnowballs(c){
+  c.innerHTML=`
+    <div class="mg-msg" id="sb-msg">Click the red targets before they disappear!</div>
     <div class="mg-score" id="sb-score">🎯 0</div>
-    <canvas id="sb-canvas" width="420" height="280" style="background:#12304f;border-radius:12px;cursor:crosshair"></canvas>
+    <canvas id="sb-canvas" width="420" height="260" style="background:linear-gradient(180deg,#102540,#1a4060);cursor:crosshair"></canvas>
     <div class="mg-controls">
       <button class="mg-btn" id="sb-start" onclick="startSnowballs()">▶ Start</button>
-      <button class="mg-btn secondary" onclick="closeModal({target:document.getElementById('modal-overlay')})">✕ Close</button>
+      <button class="mg-btn secondary" onclick="closeModal()">✕ Close</button>
     </div>`;
 }
-
-function startSnowballs() {
+function startSnowballs(){
   stopAllGames();
-  const canvas=document.getElementById('sb-canvas');
-  const ctx=canvas.getContext('2d');
+  const cv=document.getElementById('sb-canvas'),ctx=cv.getContext('2d');
   let score=0,timeLeft=15,targets=[],particles=[];
   document.getElementById('sb-score').textContent='🎯 0';
   document.getElementById('sb-start').disabled=true;
   document.getElementById('sb-msg').textContent='Hit the targets!';
-
-  function spawnTarget(){
-    if(targets.length<5) targets.push({x:30+Math.random()*360,y:30+Math.random()*220,r:18+Math.random()*12,life:3000,born:Date.now()});
-  }
-  const sp=setInterval(spawnTarget,600);gameLoops.push(sp);
-
+  const sp=setInterval(()=>{if(targets.length<5)targets.push({x:28+Math.random()*364,y:25+Math.random()*210,r:17+Math.random()*11,born:Date.now(),life:2800});},550);
+  gameLoops.push(sp);
   function draw(){
-    ctx.clearRect(0,0,420,280);
-    // Snowflakes
-    ctx.fillStyle='rgba(255,255,255,0.07)';
-    for(let i=0;i<30;i++){ctx.fillRect((i*37+Date.now()*0.02)%420,(i*19+Date.now()*0.04)%280,2,2);}
-    // Targets
+    ctx.clearRect(0,0,420,260);
+    for(let i=0;i<30;i++){ctx.fillStyle='rgba(255,255,255,.05)';ctx.fillRect((i*37+Date.now()*.015)%420,(i*17+Date.now()*.03)%260,2,2);}
     targets.forEach(t=>{
       const age=(Date.now()-t.born)/t.life;
-      ctx.globalAlpha=1-age*0.6;
-      ctx.fillStyle='#ff7f7f';ctx.beginPath();ctx.arc(t.x,t.y,t.r,0,Math.PI*2);ctx.fill();
+      ctx.globalAlpha=1-age*.65;
+      ctx.fillStyle='#cc3333';ctx.beginPath();ctx.arc(t.x,t.y,t.r,0,Math.PI*2);ctx.fill();
       ctx.strokeStyle='white';ctx.lineWidth=2;ctx.stroke();
-      ctx.fillStyle='white';ctx.font='bold 14px Nunito';ctx.textAlign='center';
-      ctx.fillText('❄️',t.x,t.y+5);ctx.textAlign='start';
+      ctx.fillStyle='white';ctx.font='16px serif';ctx.textAlign='center';ctx.fillText('❄️',t.x,t.y+5);ctx.textAlign='start';
       ctx.globalAlpha=1;
     });
-    // Particles
-    particles.forEach(p=>{
-      ctx.globalAlpha=p.life/20;
-      ctx.fillStyle='white';ctx.fillRect(p.x,p.y,3,3);
-      p.x+=p.vx;p.y+=p.vy;p.life--;
-    });
-    particles=particles.filter(p=>p.life>0);
-    ctx.globalAlpha=1;
-    ctx.fillStyle='#00b8a9';ctx.fillRect(10,268,400*(timeLeft/15),8);
+    particles.forEach(p=>{ctx.globalAlpha=p.life/18;ctx.fillStyle='white';ctx.fillRect(p.x,p.y,3,3);p.x+=p.vx;p.y+=p.vy;p.life--;});
+    particles=particles.filter(p=>p.life>0);ctx.globalAlpha=1;
+    ctx.fillStyle='rgba(255,255,255,.08)';ctx.fillRect(10,250,400,7);
+    ctx.fillStyle='#00b8a9';ctx.fillRect(10,250,400*(timeLeft/15),7);
     targets=targets.filter(t=>(Date.now()-t.born)<t.life);
   }
-
-  canvas.onclick=function(e){
-    const r=canvas.getBoundingClientRect();
-    const mx=(e.clientX-r.left)*(420/r.width),my=(e.clientY-r.top)*(280/r.height);
+  cv.onclick=e=>{
+    const r=cv.getBoundingClientRect(),mx=(e.clientX-r.left)*(420/r.width),my=(e.clientY-r.top)*(260/r.height);
     let hit=false;
     targets=targets.filter(t=>{
       if(!hit&&Math.hypot(mx-t.x,my-t.y)<t.r+5){
-        hit=true;score++;
-        document.getElementById('sb-score').textContent='🎯 '+score;
-        for(let i=0;i<12;i++)particles.push({x:t.x,y:t.y,vx:(Math.random()-0.5)*4,vy:(Math.random()-0.5)*4,life:20});
+        hit=true;score++;document.getElementById('sb-score').textContent='🎯 '+score;
+        for(let i=0;i<12;i++)particles.push({x:t.x,y:t.y,vx:(Math.random()-.5)*4,vy:(Math.random()-.5)*4,life:18});
         return false;
-      }
-      return true;
+      }return true;
     });
   };
-
   const loop=setInterval(draw,33);gameLoops.push(loop);
-  const timer=setInterval(()=>{
-    timeLeft--;
-    if(timeLeft<=0){
-      clearInterval(timer);clearInterval(loop);clearInterval(sp);gameLoops=[];
-      document.getElementById('sb-msg').textContent=`Done! You hit ${score} targets!`;
-      document.getElementById('sb-start').textContent='▶ Play Again';
-      document.getElementById('sb-start').disabled=false;
-      document.getElementById('sb-start').onclick=startSnowballs;
-      giveReward(score*3+5,`Snowball Toss: ${score} hits!`);
-    }
-  },1000);gameLoops.push(timer);
+  const timer=setInterval(()=>{timeLeft--;if(timeLeft<=0){
+    clearInterval(timer);clearInterval(loop);clearInterval(sp);gameLoops=[];
+    document.getElementById('sb-msg').textContent=`Done! You hit ${score} targets!`;
+    document.getElementById('sb-start').textContent='▶ Play Again';
+    document.getElementById('sb-start').disabled=false;
+    document.getElementById('sb-start').onclick=startSnowballs;
+    giveReward(score*3+5,`Snowball Toss: ${score} hits!`);
+  }},1000);gameLoops.push(timer);
 }
 
-// ═══════════════════════════════════════════
-//  MINI-GAME 4: MEMORY MATCH
-// ═══════════════════════════════════════════
-
-function buildMemory(container) {
+// ══════════════════════════════════════════
+//  MINI-GAME 4: MEMORY
+// ══════════════════════════════════════════
+function buildMemory(c){
   const emojis=['🐧','🐟','🧊','🌊','⭐','🏔️','🦭','❄️'];
-  let cards=[];
-  [...emojis,...emojis].forEach((e,i)=>cards.push({id:i,emoji:e,flipped:false,matched:false}));
-  cards=cards.sort(()=>Math.random()-0.5);
+  let cards=[...emojis,...emojis].map((e,i)=>({id:i,emoji:e,flipped:false,matched:false})).sort(()=>Math.random()-.5);
   let flipped=[],moves=0,matches=0,canClick=true;
-
-  container.innerHTML=`
+  c.innerHTML=`
     <div class="mg-msg" id="mem-msg">Match all the pairs!</div>
     <div class="mg-score" id="mem-score">🎯 0 moves</div>
-    <div id="mem-grid" style="display:grid;grid-template-columns:repeat(4,72px);gap:8px;justify-content:center;margin:12px auto"></div>
+    <div id="mem-grid" style="display:grid;grid-template-columns:repeat(4,68px);gap:7px;justify-content:center;margin:10px auto"></div>
     <div class="mg-controls">
       <button class="mg-btn secondary" onclick="buildMemory(document.getElementById('mg-container'))">🔄 Restart</button>
-      <button class="mg-btn secondary" onclick="closeModal({target:document.getElementById('modal-overlay')})">✕ Close</button>
+      <button class="mg-btn secondary" onclick="closeModal()">✕ Close</button>
     </div>`;
-
   function render(){
-    const g=document.getElementById('mem-grid');
-    if(!g)return;
-    g.innerHTML='';
-    cards.forEach((c,i)=>{
+    const g=document.getElementById('mem-grid');if(!g)return;g.innerHTML='';
+    cards.forEach((card,i)=>{
       const el=document.createElement('div');
-      el.style.cssText=`width:72px;height:72px;background:${c.flipped||c.matched?'rgba(0,184,169,0.3)':'rgba(255,255,255,0.1)'};
-        border:2px solid ${c.matched?'var(--teal)':'rgba(255,255,255,0.2)'};border-radius:12px;
-        display:flex;align-items:center;justify-content:center;font-size:30px;cursor:pointer;transition:all .2s`;
-      el.textContent=c.flipped||c.matched?c.emoji:'❓';
+      el.style.cssText=`width:68px;height:68px;background:${card.flipped||card.matched?'rgba(0,184,169,.25)':'rgba(255,255,255,.09)'};
+        border:2px solid ${card.matched?'var(--teal)':'rgba(255,255,255,.18)'};border-radius:11px;
+        display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;transition:all .18s;user-select:none`;
+      el.textContent=card.flipped||card.matched?card.emoji:'❓';
       el.onclick=()=>{
-        if(!canClick||c.flipped||c.matched)return;
-        c.flipped=true;flipped.push(i);moves++;
+        if(!canClick||card.flipped||card.matched)return;
+        card.flipped=true;flipped.push(i);moves++;
         document.getElementById('mem-score').textContent='🎯 '+moves+' moves';
         render();
         if(flipped.length===2){
-          canClick=false;
-          const [a,b]=flipped;
+          canClick=false;const[a,b]=flipped;
           setTimeout(()=>{
-            if(cards[a].emoji===cards[b].emoji){cards[a].matched=cards[b].matched=true;matches++;} 
+            if(cards[a].emoji===cards[b].emoji){cards[a].matched=cards[b].matched=true;matches++;}
             else{cards[a].flipped=cards[b].flipped=false;}
             flipped=[];canClick=true;render();
-            if(matches===8){
-              document.getElementById('mem-msg').textContent=`You won in ${moves} moves! 🎉`;
-              const reward=Math.max(15,50-moves*2);
-              giveReward(reward,`Memory: ${moves} moves!`);
-            }
-          },700);
+            if(matches===8){document.getElementById('mem-msg').textContent=`Won in ${moves} moves! 🎉`;
+              giveReward(Math.max(15,50-moves*2),`Memory: ${moves} moves!`);}
+          },650);
         }
       };
       g.appendChild(el);
@@ -1092,102 +1283,143 @@ function buildMemory(container) {
   render();
 }
 
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════
 //  MINI-GAME 5: TRIVIA
-// ═══════════════════════════════════════════
-
-const TRIVIA_Q = [
-  {q:'How many species of penguin are there?',a:'18',opts:['12','18','24','6']},
-  {q:'Which is the tallest penguin species?',a:'Emperor',opts:['King','Emperor','Gentoo','Macaroni']},
-  {q:'What do penguins use to swim?',a:'Flippers',opts:['Fins','Flippers','Tails','Feet']},
-  {q:'Penguins live in which hemisphere?',a:'Southern',opts:['Northern','Southern','Both','Neither']},
-  {q:'What is a baby penguin called?',a:'Chick',opts:['Pup','Chick','Cub','Kit']},
-  {q:'Which penguin has a yellow crest?',a:'Macaroni',opts:['Rockhopper','Macaroni','Chinstrap','Adélie']},
-  {q:'Can penguins fly?',a:'No',opts:['Yes','No','Only at night','Only when young']},
-  {q:'What do penguins eat mostly?',a:'Fish',opts:['Seaweed','Shrimp','Fish','Squid only']},
-  {q:'Where do Emperor penguins breed?',a:'Antarctica',opts:['Argentina','New Zealand','Antarctica','South Africa']},
-  {q:'What color are most penguins?',a:'Black and white',opts:['Blue and white','Brown','Black and white','Grey']},
-];
-
-function buildTrivia(container) {
-  let qs=[...TRIVIA_Q].sort(()=>Math.random()-0.5).slice(0,5);
-  let current=0,score=0;
-
+// ══════════════════════════════════════════
+function buildTrivia(c){
+  let qs=[...TRIVIA_Q].sort(()=>Math.random()-.5).slice(0,5),cur=0,score=0;
   function render(){
-    if(current>=qs.length){
-      const reward=score*4+5;
-      container.innerHTML=`
-        <div class="mg-msg" style="font-size:16px">Quiz complete!</div>
-        <div class="mg-score">${score}/${qs.length} correct 🎉</div>
+    if(cur>=qs.length){
+      c.innerHTML=`<div class="mg-score">${score}/${qs.length} correct! 🎉</div>
         <div class="mg-controls">
           <button class="mg-btn" onclick="buildTrivia(document.getElementById('mg-container'))">🔄 Play Again</button>
-          <button class="mg-btn secondary" onclick="closeModal({target:document.getElementById('modal-overlay')})">✕ Close</button>
+          <button class="mg-btn secondary" onclick="closeModal()">✕ Close</button>
         </div>`;
-      giveReward(reward,`Trivia: ${score}/${qs.length}!`);
-      return;
+      giveReward(score*4+5,`Trivia: ${score}/${qs.length}!`);return;
     }
-    const q=qs[current];
-    const shuffled=[...q.opts].sort(()=>Math.random()-0.5);
-    container.innerHTML=`
-      <div class="mg-msg">Question ${current+1} of ${qs.length}</div>
-      <div class="mg-score" style="font-size:16px;margin-bottom:14px">${q.q}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-        ${shuffled.map(o=>`
-          <button class="mg-btn" style="font-size:13px;padding:12px" onclick="answerTrivia('${o.replace(/'/g,"\\'")}','${q.a.replace(/'/g,"\\'")}')">
-            ${o}
-          </button>`).join('')}
-      </div>
-      <div class="mg-msg" id="trivia-result"></div>
-      <div class="mg-controls">
-        <button class="mg-btn secondary" onclick="closeModal({target:document.getElementById('modal-overlay')})">✕ Close</button>
-      </div>`;
+    const q=qs[cur],shuffled=[...q.opts].sort(()=>Math.random()-.5);
+    c.innerHTML=`<div class="mg-msg">Question ${cur+1} of ${qs.length}</div>
+      <div class="mg-score" style="font-size:15px;margin-bottom:12px">${q.q}</div>
+      <div class="quiz-opts">${shuffled.map(o=>`<button class="quiz-opt" onclick="answerQ('${o.replace(/'/g,"\\'")}','${q.a.replace(/'/g,"\\'")}')">${o}</button>`).join('')}</div>
+      <div id="q-result"></div>
+      <div class="mg-controls"><button class="mg-btn secondary" onclick="closeModal()">✕ Close</button></div>`;
   }
-
-  window.answerTrivia=function(ans,correct){
-    const r=document.getElementById('trivia-result');
-    if(ans===correct){score++;r.textContent='✅ Correct!';r.style.color='#00b8a9';}
-    else{r.textContent=`❌ Nope! It was: ${correct}`;r.style.color='#ff7f7f';}
-    document.querySelectorAll('#mg-container .mg-btn').forEach(b=>b.disabled=true);
-    setTimeout(()=>{current++;render();},1200);
+  window.answerQ=(ans,correct)=>{
+    const r=document.getElementById('q-result');
+    if(ans===correct){score++;r.innerHTML=`<div class="quiz-fact">✅ Correct!</div>`;}
+    else{r.innerHTML=`<div class="quiz-fact">❌ The answer was: <b>${correct}</b></div>`;}
+    document.querySelectorAll('.quiz-opt').forEach(b=>{b.disabled=true;if(b.textContent===correct)b.className='quiz-opt correct';else if(b.textContent===ans)b.className='quiz-opt wrong';});
+    setTimeout(()=>{cur++;render();},1300);
   };
   render();
 }
 
-// ═══════════════════════════════════════════
-//  STARS BACKGROUND
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════
+//  MINI-GAME 6: PENGUIN IDENTIFIER
+// ══════════════════════════════════════════
+function buildIdentifier(c){
+  let qs=[...PENGUIN_ID_DATA].sort(()=>Math.random()-.5).slice(0,6),cur=0,score=0;
+  function render(){
+    if(cur>=qs.length){
+      const pct=Math.round(score/qs.length*100);
+      let grade=pct>=80?'🏆 Penguin Expert!':pct>=50?'🐧 Penguin Fan!':'❄️ Penguin Novice';
+      c.innerHTML=`<div class="mg-score">${score}/${qs.length} — ${grade}</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.7);text-align:center;margin-bottom:12px">You identified ${score} out of ${qs.length} penguin species correctly!</div>
+        <div class="mg-controls">
+          <button class="mg-btn" onclick="buildIdentifier(document.getElementById('mg-container'))">🔄 Play Again</button>
+          <button class="mg-btn secondary" onclick="closeModal()">✕ Close</button>
+        </div>`;
+      giveReward(score*5+5,`Penguin ID: ${score}/${qs.length}!`);return;
+    }
+    const q=qs[cur],shuffled=[...q.opts].sort(()=>Math.random()-.5);
+    c.innerHTML=`
+      <div class="mg-msg">Which species is this? (${cur+1}/${qs.length})</div>
+      <img class="quiz-img" src="${q.img}" alt="penguin species" onerror="this.style.display='none'">
+      <div class="quiz-opts">${shuffled.map(o=>`<button class="quiz-opt" onclick="answerID('${o.replace(/'/g,"\\'")}','${q.name.replace(/'/g,"\\'")}')">${o}</button>`).join('')}</div>
+      <div id="id-result"></div>
+      <div class="mg-controls"><button class="mg-btn secondary" onclick="closeModal()">✕ Close</button></div>`;
+  }
+  window.answerID=(ans,correct)=>{
+    const r=document.getElementById('id-result');
+    const q=qs[cur];
+    if(ans===correct){
+      score++;
+      r.innerHTML=`<div class="quiz-fact">✅ Correct! That's a <b>${correct}</b>.<br>${q.fact}</div>`;
+    } else {
+      r.innerHTML=`<div class="quiz-fact">❌ That's actually a <b>${correct}</b>!<br>${q.fact}</div>`;
+    }
+    document.querySelectorAll('.quiz-opt').forEach(b=>{
+      b.disabled=true;
+      if(b.textContent===correct)b.className='quiz-opt correct';
+      else if(b.textContent===ans)b.className='quiz-opt wrong';
+    });
+    setTimeout(()=>{cur++;render();},2200);
+  };
+  render();
+}
 
+// ══════════════════════════════════════════
+//  ONBOARDING
+// ══════════════════════════════════════════
+function showOnboarding(){
+  const ov=document.createElement('div');
+  ov.className='onboard-overlay';
+  ov.innerHTML=`<div class="onboard-box">
+    <img src="${IMG.emperor}" style="width:80px;height:80px;object-fit:cover;border-radius:50%;margin:0 auto 14px;display:block;border:3px solid var(--gold)" onerror="this.style.display='none'">
+    <h2>Welcome to Penguin Isle! 🐧</h2>
+    <p>Build your very own penguin island, follow a story, play mini-games, and discover real penguin species!</p>
+    <div class="onboard-steps">
+      <div class="onboard-step">
+        <img src="${IMG.igloo}" onerror="this.style.display='none'">
+        <b>🌍 Build</b>
+        Select a building from the toolbar and click any empty tile to place it.
+      </div>
+      <div class="onboard-step">
+        <img src="${IMG.emperor2}" onerror="this.style.display='none'">
+        <b>📖 Story</b>
+        Complete chapter tasks to unlock new buildings and rewards.
+      </div>
+      <div class="onboard-step">
+        <img src="${buildingSVG('f','🎣','#2196b8')}" onerror="this.style.display='none'">
+        <b>🎮 Mini-games</b>
+        Play games to earn Fish 🐟 — use it to buy buildings and expand!
+      </div>
+      <div class="onboard-step">
+        <img src="${IMG.adelie}" onerror="this.style.display='none'">
+        <b>🐧 Identify</b>
+        Try the Penguin Identifier quiz to learn real species!
+      </div>
+    </div>
+    <button class="onboard-btn" onclick="this.closest('.onboard-overlay').remove()">Let's Build! 🏗️</button>
+  </div>`;
+  document.body.appendChild(ov);
+}
+
+// ══════════════════════════════════════════
+//  STARS
+// ══════════════════════════════════════════
 function buildStars(){
   const s=document.getElementById('stars');
   for(let i=0;i<80;i++){
-    const d=document.createElement('div');
-    d.className='star';
-    d.style.cssText=`width:${1+Math.random()*2}px;height:${1+Math.random()*2}px;
-      top:${Math.random()*100}%;left:${Math.random()*100}%;
-      animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s`;
+    const d=document.createElement('div');d.className='star';
+    d.style.cssText=`width:${1+Math.random()*2}px;height:${1+Math.random()*2}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s`;
     s.appendChild(d);
   }
 }
 
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════
 //  BOOT
-// ═══════════════════════════════════════════
-
-function boot() {
-  buildStars();
-  load();
-  // Sync owned buildings back to BUILDINGS array
-  BUILDINGS.forEach(b=>{ if(S.ownedBuildings.includes(b.id)) b.unlocked=true; });
-  // Sync chapter unlocks
-  CHAPTERS.forEach((ch,i)=>{
-    if(i===0)ch.unlocked=true;
-    else if(isChapterComplete(CHAPTERS[i-1]))ch.unlocked=true;
-  });
-  buildToolbar();
-  renderGrid();
-  updateStats();
+// ══════════════════════════════════════════
+function boot(){
+  buildStars();load();
+  BUILDINGS.forEach(b=>{if(S.ownedBuildings.includes(b.id))b.unlocked=true;});
+  CHAPTERS.forEach((ch,i)=>{if(i===0)ch.unlocked=true;else if(isChapComplete(CHAPTERS[i-1]))ch.unlocked=true;});
+  buildToolbar();renderGrid();updateStats();
+  // Show world instructions
+  if(S.showWorldInstructions){document.getElementById('world-instructions').style.display='block';}
+  // Show onboarding once
+  if(!S.seenOnboarding){S.seenOnboarding=true;save();showOnboarding();}
 }
-
 boot();
 </script>
 </body>
