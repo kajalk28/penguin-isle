@@ -327,7 +327,6 @@ const PENGUIN_SVG = {
     <ellipse cx="88" cy="228" rx="14" ry="7" fill="#f5a800"/>
     <ellipse cx="112" cy="228" rx="14" ry="7" fill="#f5a800"/>
     <!-- label -->
-    <text x="100" y="252" text-anchor="middle" font-size="11" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">EMPEROR</text>
   </svg>`),
 
   king: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
@@ -360,7 +359,6 @@ const PENGUIN_SVG = {
     <!-- feet -->
     <ellipse cx="88" cy="228" rx="13" ry="6" fill="#f5a800"/>
     <ellipse cx="112" cy="228" rx="13" ry="6" fill="#f5a800"/>
-    <text x="100" y="252" text-anchor="middle" font-size="11" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">KING</text>
   </svg>`),
 
   adelie: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
@@ -391,7 +389,6 @@ const PENGUIN_SVG = {
     <!-- feet -->
     <ellipse cx="88" cy="228" rx="13" ry="6" fill="#e07000"/>
     <ellipse cx="112" cy="228" rx="13" ry="6" fill="#e07000"/>
-    <text x="100" y="252" text-anchor="middle" font-size="11" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">ADÉLIE</text>
   </svg>`),
 
   chinstrap: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
@@ -417,7 +414,6 @@ const PENGUIN_SVG = {
     <ellipse cx="145" cy="160" rx="12" ry="36" fill="#111" transform="rotate(10,145,160)"/>
     <ellipse cx="88" cy="228" rx="13" ry="6" fill="#555"/>
     <ellipse cx="112" cy="228" rx="13" ry="6" fill="#555"/>
-    <text x="100" y="252" text-anchor="middle" font-size="10" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">CHINSTRAP</text>
   </svg>`),
 
   gentoo: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
@@ -444,7 +440,6 @@ const PENGUIN_SVG = {
     <ellipse cx="147" cy="160" rx="13" ry="40" fill="#111" transform="rotate(10,147,160)"/>
     <ellipse cx="88" cy="228" rx="14" ry="6" fill="#ff5500"/>
     <ellipse cx="112" cy="228" rx="14" ry="6" fill="#ff5500"/>
-    <text x="100" y="252" text-anchor="middle" font-size="11" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">GENTOO</text>
   </svg>`),
 
   macaroni: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
@@ -475,7 +470,6 @@ const PENGUIN_SVG = {
     <ellipse cx="146" cy="158" rx="13" ry="38" fill="#111" transform="rotate(10,146,158)"/>
     <ellipse cx="88" cy="228" rx="13" ry="6" fill="#ff8800"/>
     <ellipse cx="112" cy="228" rx="13" ry="6" fill="#ff8800"/>
-    <text x="100" y="252" text-anchor="middle" font-size="10" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">MACARONI</text>
   </svg>`),
 
   rockhopper: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
@@ -508,7 +502,6 @@ const PENGUIN_SVG = {
     <ellipse cx="145" cy="160" rx="12" ry="36" fill="#111" transform="rotate(10,145,160)"/>
     <ellipse cx="88" cy="228" rx="12" ry="6" fill="#ff7700"/>
     <ellipse cx="112" cy="228" rx="12" ry="6" fill="#ff7700"/>
-    <text x="100" y="252" text-anchor="middle" font-size="9.5" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">ROCKHOPPER</text>
   </svg>`),
 
   little: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
@@ -572,7 +565,6 @@ const PENGUIN_SVG = {
     <ellipse cx="146" cy="158" rx="13" ry="38" fill="#111" transform="rotate(10,146,158)"/>
     <ellipse cx="88" cy="228" rx="13" ry="6" fill="#555"/>
     <ellipse cx="112" cy="228" rx="13" ry="6" fill="#555"/>
-    <text x="100" y="252" text-anchor="middle" font-size="10" fill="#aaddff" font-family="Arial,sans-serif" font-weight="bold">AFRICAN</text>
   </svg>`),
 };
 
@@ -1333,7 +1325,7 @@ function buildIdentifier(c){
     const q=qs[cur],shuffled=[...q.opts].sort(()=>Math.random()-.5);
     c.innerHTML=`
       <div class="mg-msg">Which species is this? (${cur+1}/${qs.length})</div>
-      <img class="quiz-img" src="${q.img}" alt="penguin species" onerror="this.style.display='none'">
+      <img class="quiz-img" src="${q.img}" alt="" onerror="this.style.display='none'">
       <div class="quiz-opts">${shuffled.map(o=>`<button class="quiz-opt" onclick="answerID('${o.replace(/'/g,"\\'")}','${q.name.replace(/'/g,"\\'")}')">${o}</button>`).join('')}</div>
       <div id="id-result"></div>
       <div class="mg-controls"><button class="mg-btn secondary" onclick="closeModal()">✕ Close</button></div>`;
